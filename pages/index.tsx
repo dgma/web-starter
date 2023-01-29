@@ -7,8 +7,10 @@ const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
   const connectToMetaMask = async () => {
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    console.log(accounts);
+    if (window.ethereum) {
+      const accounts = await window.ethereum.request?.({ method: 'eth_requestAccounts' });
+      console.log(accounts);
+    }
   };
 
   return (
