@@ -6,6 +6,11 @@ import styles from '@/styles/Home.module.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  const connectToMetaMask = async () => {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    console.log(accounts);
+  };
+
   return (
     <>
       <Head>
@@ -21,21 +26,9 @@ export default function Home() {
             <code className={styles.code}>pages/index.tsx</code>
           </p>
           <div>
-            <a
-              href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              By{' '}
-              <Image
-                src="/vercel.svg"
-                alt="Vercel Logo"
-                className={styles.vercelLogo}
-                width={100}
-                height={24}
-                priority
-              />
-            </a>
+            <button onClick={connectToMetaMask}>
+              Connect to MetaMask
+            </button>
           </div>
         </div>
 
