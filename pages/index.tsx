@@ -28,7 +28,7 @@ export default function Home() {
             <code className={styles.code}>pages/index.tsx</code>
           </p>
           <div>
-            <button onClick={connectToMetaMask}>
+            <button className={styles.metamask} onClick={connectToMetaMask}>
               Connect to MetaMask
             </button>
           </div>
