@@ -13,6 +13,8 @@ COPY --chown=node:node package-lock.json package-lock.json
 USER node
 
 RUN npm install --production
+RUN npm next build
+RUN npm next export
 
 COPY --chown=node:node .next .next
 COPY --chown=node:node public public
