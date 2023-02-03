@@ -93,4 +93,4 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: cd /root/web;
           docker build -t web .;
-          docker run -dp 3000:8080 web;
+          docker run -dp 8080:8080 web;
