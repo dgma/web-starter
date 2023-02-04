@@ -93,5 +93,5 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: cd /root/web;
           docker build -t web .;
-          docker rm -f web || true
+          docker rm $(docker stop $(docker ps -a -q --filter ancestor=web:latest --format="{{.ID}}"));
           docker run -dp 8080:8080 web;
