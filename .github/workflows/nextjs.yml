@@ -94,4 +94,4 @@ jobs:
         script: cd /root/web;
           docker build -t web .;
           docker stop $(docker ps -a -q --filter ancestor="web:latest");
-          docker run -dp 8080:8080 web;
+          docker run -dp 3000:80 web;
