@@ -2,7 +2,7 @@
 #
 # To get started with Next.js see: https://nextjs.org/docs/getting-started
 #
-name: Deploy Next.js site to Pages
+name: Build and Deploy
 
 on:
   # Runs on pushes targeting the default branch
@@ -93,5 +93,5 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: cd /root/web;
           docker build -t web .;
-          docker stop $(docker ps -a -q --filter ancestor="web:latest");
-          docker run -dp 3001:80 web;
+          docker rm -f web || true;
+          docker run --name web -dp 3001:80 web;
