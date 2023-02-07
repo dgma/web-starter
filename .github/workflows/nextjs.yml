@@ -92,6 +92,6 @@ jobs:
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: cd /root/web;
-          docker build -t web .;
+          docker build . -t web --build-arg NPM_TOKEN=$GITHUB_TOKEN;
           docker rm -f web || true;
           docker run --name web -d -p 80:80/tcp web:latest;
