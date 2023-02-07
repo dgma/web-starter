@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json* ./
-RUN echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN\n@dgma:registry=https://npm.pkg.github.com" > .npmrc && \
+RUN echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" > .npmrc && \
     npm ci && \
     rm -f .npmrc
 
