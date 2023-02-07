@@ -63,7 +63,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Authenticate with private NPM package
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}\n@dgma:registry=https://npm.pkg.github.com" > ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.NPM_TOKEN }}\n@dgma:registry=https://npm.pkg.github.com" > ~/.npmrc
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
@@ -94,6 +94,6 @@ jobs:
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: cd /root/web;
-          docker build . -t web --build-arg NPM_TOKEN=${{ secrets.GITHUB_TOKEN }};
+          docker build . -t web --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }};
           docker rm -f web || true;
           docker run --name web -d -p 80:80/tcp web:latest;
