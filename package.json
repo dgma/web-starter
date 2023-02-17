@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@dgma/diamond": "0.0.7",
+    "@metamask/detect-provider": "2.0.0",
     "@next/font": "13.1.6",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
@@ -19,7 +21,6 @@
     "next": "13.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "typescript": "4.9.4",
-    "@dgma/diamond": "0.0.7"
+    "typescript": "4.9.4"
   }
 }
