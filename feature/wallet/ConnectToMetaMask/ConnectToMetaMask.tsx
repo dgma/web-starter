@@ -1,6 +1,6 @@
-import { useWallet } from '../useWallet';
+import Button from '@/libs/ui/Button'
 
-import styles from './ConnectToMetaMask.module.css';
+import { useWallet } from '../useWallet';
 
 export const ConnectToMetaMask = () => {
   const { connectToMetaMask, currentAccount } = useWallet();
@@ -10,8 +10,8 @@ export const ConnectToMetaMask = () => {
   }
 
   return (
-    <button className={styles.main} onClick={connectToMetaMask}>
+    <Button onClick={connectToMetaMask}>
       Connect to MetaMask
-    </button>
+    </Button>
   );
 }
