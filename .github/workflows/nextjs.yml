@@ -15,7 +15,6 @@ on:
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
-  pages: write
   id-token: write
 
 # Allow one concurrent deployment
@@ -63,7 +62,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
       - name: Authenticate with private NPM package
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
+        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_GITHUB_TOKEN }}" > ~/.npmrc
       - name: Install dependencies
         run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
       - name: Build with Next.js
@@ -94,6 +93,6 @@ jobs:
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: cd /root/web;
-          docker build . -t web --build-arg NPM_TOKEN=${{ secrets.GITHUB_TOKEN }};
+          docker build . -t web --build-arg NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }};
           docker rm -f web || true;
           docker run --name web -d -p 80:80/tcp web:latest;
