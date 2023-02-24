@@ -11,6 +11,7 @@ import faucetAbi from '@dgma/protocol/abi/contracts/faucet.sol/Faucet.json';
 import styles from './Demo.module.css'
 
 const faucetAddress = deploymentLock.rabbit.Faucet.address;
+const tokenAddress = deploymentLock.rabbit.USDgmTokenDiamond.address;
 
 export default function Demo() {
 
@@ -30,25 +31,27 @@ export default function Demo() {
     [setTransactionPending, getProvider]
   );
 
-  const handleDepositPigmy = useCallback(
-    async () => {
-      const signer = (await getProvider()).getSigner();
-      const contract = new ethers.Contract(faucetAddress, faucetAbi, signer);
-      setTransactionPending(true);
-      const ts = await contract.deposit({value: ethers.utils.parseEther("100")});
-      await ts.wait(1);
-      setTransactionPending(false);
-    },
-    [setTransactionPending, getProvider]
-  )
-  
+  const addUSDgmToken = async () => {
+    const { ethereum } = window as any
+    await ethereum.request({
+      method: 'wallet_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+          address: tokenAddress,
+          symbol: 'USDgm',
+          decimals: 18,
+        },
+      },
+    })
+  }
+
   return (
     <div className={styles.root}>
       <span className={styles.nav}>
         <Link href="/">Back to home</Link>
       </span>
       <div className={styles.setup}>
-        <Account pending={isTransactionPending} />
         <div className={styles.network}>
           <p>
             Insure that you metamask wallet connected to the Rabbit network
@@ -70,9 +73,12 @@ export default function Demo() {
               Token: PYGMY
             </p>
           </div>
+          <div className={styles.funding}>
+            <Account pending={isTransactionPending} />
+            <Button className={styles.btn} onClick={handleGetPigmy}> Get some PIGMY from the faucet </Button>
+            <Button className={styles.btn} onClick={addUSDgmToken}>Add USDgm to the wallet</Button>
+          </div>
         </div>
-        <Button onClick={handleGetPigmy}> Get some PIGMY from the faucet </Button>
-        <Button className={styles.depositBtn} onClick={handleDepositPigmy}> Deposit 100 PIGMY to the faucet </Button>
       </div>
       <DemoForm setTransactionPending={setTransactionPending} isTransactionPending={isTransactionPending} />
       <Nav isShowed/>

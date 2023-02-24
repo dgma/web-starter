@@ -55,7 +55,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   }
   const mint = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const val = depositInput?.current?.value;
+    const val = mintInput?.current?.value;
     const signer = await getSigner(getProvider);
     const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer)
     if (val) {
@@ -64,7 +64,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   }
   const burn = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const val = depositInput?.current?.value;
+    const val = burnInput?.current?.value;
     const signer = await getSigner(getProvider);
     const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
     if (val) {
@@ -75,6 +75,8 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   return (
     <div className={styles.root}>
       <h3 className={styles.title}>PIGMY/USDgm Vault</h3>
+      <p>You need to deposit PIGMY as collateral in order to mint USDgm</p>
+      <p>Minting Ratio is 1:1</p>
       <div className={styles.row}>
           <div className={styles.group}>
             <input 

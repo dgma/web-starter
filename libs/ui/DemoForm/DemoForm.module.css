@@ -2,7 +2,8 @@
   display: flex;
   justify-content: center;
   flex-direction: column;
-  margin-top: 5rem;
+  margin-top: 1rem;
+  text-align: center;
 }
 
 .title {
@@ -13,6 +14,8 @@
 .row {
   display: flex;
   flex-direction: column;
+  width: 450px;
+  align-self: center;
 }
 
 .group {

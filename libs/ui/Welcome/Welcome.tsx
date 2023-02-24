@@ -11,7 +11,7 @@ const Welcome: FC<{}> = () => {
       <h1 className={styles.title}>
         <Typewriter
           onInit={(typewriter) => {
-            typewriter.typeString('Welcome to the Dogma')
+            typewriter.typeString('Welcome to the Dogma Protocol')
               .callFunction(() => {
                 setIsWelcomeMessageShowed(true);
               })
