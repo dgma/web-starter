@@ -1,0 +1,34 @@
+.root {
+  padding: 6rem 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+.setup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.nav {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.network {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid;
+}
+
+.networkParams {
+  padding: 1rem;
+}
+
+.guideLink {
+  color: #037dd6;
+}
+
+.depositBtn {
+  margin-top: 10px;
+}

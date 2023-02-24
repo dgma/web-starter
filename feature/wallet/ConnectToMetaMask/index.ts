@@ -1,1 +1,0 @@
-export { ConnectToMetaMask } from './ConnectToMetaMask';

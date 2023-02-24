@@ -1,8 +1,10 @@
 import Head from 'next/head'
+import { Inter } from '@next/font/google'
 import styles from '@/styles/main.module.css'
-import { Welcome } from '@/libs/ui/Welcome';
+import { Demo } from '@/libs/ui/Demo';
 
-export default function HomePage() {
+export default function DemoPage() {
+  
   return (
     <>
       <Head>
@@ -12,7 +14,7 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <Welcome/>
+        <Demo />
       </main>
     </>
   )

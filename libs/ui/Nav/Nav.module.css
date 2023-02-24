@@ -1,0 +1,40 @@
+.nav {
+  padding-top: 20px;
+  display: flex;
+  justify-content: center;
+  transition: opacity 1.5s ease-out;
+}
+
+.navShowed {
+  opacity: 1;
+}
+
+.navHidden {
+  opacity: 0;
+}
+
+.navHidden a {
+  visibility: hidden;
+}
+
+.hoverUnderlineAnimation {
+  display: inline-block;
+  position: relative;
+  margin: 0 20px;
+}
+
+.hoverUnderlineAnimation::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  transform: scaleY(0);
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #037dd6;
+  transition: transform 0.25s ease-out;
+}
+
+.hoverUnderlineAnimation:hover::after {
+  transform: scaleY(1);
+}
