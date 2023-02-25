@@ -1,6 +1,6 @@
 
 import type { FC, Dispatch, SetStateAction } from 'react';
-import { MouseEvent, useRef, useCallback, useMemo } from 'react';
+import { MouseEvent, useRef, useCallback } from 'react';
 import { ethers } from 'ethers'
 
 import Button from '@/libs/ui/Button';
@@ -9,12 +9,14 @@ import { toBigNumERC20 } from '@/libs/decimals';
 
 import deploymentLock from '@dgma/protocol/deployment-lock.json'
 import vaultFacetAbi from '@dgma/protocol/abi/contracts/app/facets/vaults.sol/VaultFacet.json';
-import faucetAbi from '@dgma/protocol/abi/contracts/faucet.sol/Faucet.json';
 import styles from './DemoForm.module.css';
 
 const appDiamondAddress = deploymentLock.rabbit.AppDiamond.address;
-const faucetAddress = deploymentLock.rabbit.Faucet.address;
 const tokenAddress = deploymentLock.rabbit.USDgmTokenDiamond.address;
+
+const wait = (ms: number) => new Promise((res) => {
+  setTimeout(res, ms);
+})
 
 interface DemoFormProps {
   setTransactionPending: Dispatch<SetStateAction<boolean>>
@@ -73,11 +75,10 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   }
 
   const handleGetPigmy = async () => {
-    const signer = provider?.getSigner();
-    const contract = new ethers.Contract(faucetAddress, faucetAbi, signer);
     setTransactionPending(true);
-    const ts = await contract.withdraw();
-    await ts.wait(1);
+    const addr = await provider.getSigner().getAddress();
+    const result = await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
+    await wait(20000);
     setTransactionPending(false);
   };
 
