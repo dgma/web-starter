@@ -4,26 +4,26 @@ import { MouseEvent, useRef, useCallback, useMemo } from 'react';
 import { ethers } from 'ethers'
 
 import Button from '@/libs/ui/Button';
-import { useNetworkProvider, GetProvider } from '@/libs/network'
+import { useNetworkProvider } from '@/libs/network'
 import { toBigNumERC20 } from '@/libs/decimals';
 
 import deploymentLock from '@dgma/protocol/deployment-lock.json'
 import vaultFacetAbi from '@dgma/protocol/abi/contracts/app/facets/vaults.sol/VaultFacet.json';
+import faucetAbi from '@dgma/protocol/abi/contracts/faucet.sol/Faucet.json';
 import styles from './DemoForm.module.css';
 
-const appDiamondAddress = deploymentLock.rabbit.AppDiamond.address
-const tokenAddress = deploymentLock.rabbit.USDgmTokenDiamond.address
+const appDiamondAddress = deploymentLock.rabbit.AppDiamond.address;
+const faucetAddress = deploymentLock.rabbit.Faucet.address;
+const tokenAddress = deploymentLock.rabbit.USDgmTokenDiamond.address;
 
 interface DemoFormProps {
   setTransactionPending: Dispatch<SetStateAction<boolean>>
   isTransactionPending: boolean
 }
 
-const getSigner = async (getProvider: GetProvider) => (await getProvider()).getSigner()
-
 const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPending}) => {
 
-  const { getProvider } = useNetworkProvider();
+  const provider = useNetworkProvider().provider as ethers.providers.JsonRpcProvider;
 
   const depositInput = useRef<HTMLInputElement>(null);
   const mintInput = useRef<HTMLInputElement>(null);
@@ -41,7 +41,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   const deposit = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const val = depositInput?.current?.value;
-    const signer = await getSigner(getProvider);
+    const signer = provider.getSigner();
     const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
     if (val) {
       handleLoading(await contract.deposit({value: ethers.utils.parseEther(val)}))
@@ -49,14 +49,14 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   }
   const withdraw = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
-    const signer = await getSigner(getProvider);
+    const signer = provider.getSigner();
     const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
     handleLoading(await contract.withdraw())
   }
   const mint = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const val = mintInput?.current?.value;
-    const signer = await getSigner(getProvider);
+    const signer = provider.getSigner();
     const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer)
     if (val) {
       handleLoading(await contract.mint(toBigNumERC20(val), tokenAddress))
@@ -65,11 +65,35 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   const burn = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     const val = burnInput?.current?.value;
-    const signer = await getSigner(getProvider);
+    const signer = provider.getSigner();
     const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
     if (val) {
       handleLoading(await contract.burn(toBigNumERC20(val), tokenAddress))
     }
+  }
+
+  const handleGetPigmy = async () => {
+    const signer = provider?.getSigner();
+    const contract = new ethers.Contract(faucetAddress, faucetAbi, signer);
+    setTransactionPending(true);
+    const ts = await contract.withdraw();
+    await ts.wait(1);
+    setTransactionPending(false);
+  };
+
+  const addUSDgmToken = async () => {
+    const { ethereum } = window as any
+    await ethereum.request({
+      method: 'wallet_watchAsset',
+      params: {
+        type: 'ERC20',
+        options: {
+          address: tokenAddress,
+          symbol: 'USDgm',
+          decimals: 18,
+        },
+      },
+    })
   }
 
   return (
@@ -78,69 +102,73 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
       <p>You need to deposit PIGMY as collateral in order to mint USDgm</p>
       <p>Minting Ratio is 1:1</p>
       <div className={styles.row}>
-          <div className={styles.group}>
-            <input 
-              type="number" 
-              placeholder="amount to deposit, PIGMY" 
-              className={styles.input} 
-              ref={depositInput}
-              disabled={isTransactionPending}
-            />
-            <Button 
-              className={styles.btn} 
-              onClick={deposit}
-              disabled={isTransactionPending}
-            >
-                Deposit
-            </Button>
-          </div>
-          <div className={styles.group}>
-            <input 
-              type="string" 
-              value={"max available amount"}
-              className={styles.input} 
-              disabled={true}/>
-            <Button 
-              className={styles.btn} 
-              onClick={withdraw}
-              disabled={isTransactionPending}
-            >
-              Withdraw
-            </Button>
-          </div>
+        <div className={styles.group}>
+          <input 
+            type="number" 
+            placeholder="amount to deposit, PIGMY" 
+            className={styles.input} 
+            ref={depositInput}
+            disabled={isTransactionPending}
+          />
+          <Button 
+            className={styles.btn} 
+            onClick={deposit}
+            disabled={isTransactionPending}
+          >
+              Deposit
+          </Button>
         </div>
-        <div className={styles.row}>
-          <div className={styles.group}>
-            <input 
-              type="number" 
-              placeholder="amount to mint, USDgm" 
-              className={styles.input} 
-              ref={mintInput}
-              disabled={isTransactionPending}/>
-            <Button 
-              className={styles.btn} 
-              onClick={mint}
-              disabled={isTransactionPending}
-            >
-              Mint
-            </Button>
-          </div>
-          <div className={styles.group}>
-            <input 
-              type="number" 
-              placeholder="amount to burn, USDgm" 
-              className={styles.input} 
-              ref={burnInput}
-              disabled={isTransactionPending}/>
-            <Button 
-              className={styles.btn} 
-              onClick={burn}
-              disabled={isTransactionPending}
-            >
-              Burn
-            </Button>
-          </div>
+        <div className={styles.group}>
+          <input 
+            type="string" 
+            value={"max available amount"}
+            className={styles.input} 
+            disabled={true}/>
+          <Button 
+            className={styles.btn} 
+            onClick={withdraw}
+            disabled={isTransactionPending}
+          >
+            Withdraw
+          </Button>
         </div>
+      </div>
+      <div className={styles.row}>
+        <div className={styles.group}>
+          <input 
+            type="number" 
+            placeholder="amount to mint, USDgm" 
+            className={styles.input} 
+            ref={mintInput}
+            disabled={isTransactionPending}/>
+          <Button 
+            className={styles.btn} 
+            onClick={mint}
+            disabled={isTransactionPending}
+          >
+            Mint
+          </Button>
+        </div>
+        <div className={styles.group}>
+          <input 
+            type="number" 
+            placeholder="amount to burn, USDgm" 
+            className={styles.input} 
+            ref={burnInput}
+            disabled={isTransactionPending}/>
+          <Button 
+            className={styles.btn} 
+            onClick={burn}
+            disabled={isTransactionPending}
+          >
+            Burn
+          </Button>
+        </div>
+      </div>
+      <div className={styles.utilsGroup}>
+        <Button onClick={handleGetPigmy}> Get PIGMY </Button>
+        <Button onClick={addUSDgmToken}>Add USDgm to metamask</Button>
+      </div>
     </div>
   )
 };

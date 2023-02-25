@@ -1,37 +1,43 @@
-import { createContext, useCallback, useRef } from 'react';
+import { createContext, useEffect, useState } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 import { ethers } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider';
 
-export type GetProvider = () => Promise<ethers.providers.JsonRpcProvider>;
+export type Provider = ethers.providers.JsonRpcProvider | undefined;
 
 export interface NetworkProviderContext {
-  getProvider: GetProvider;
+  provider: Provider;
+  isConnectionInProcess: boolean;
 }
 
 export const NetworkContext = createContext<NetworkProviderContext>({
-  getProvider: () => Promise.resolve(new ethers.providers.JsonRpcProvider()),
+  provider: undefined,
+  isConnectionInProcess: false,
 })
 
 const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
-  const providerRef = useRef<ethers.providers.JsonRpcProvider>()
+  const [provider, setProvider] = useState<Provider>();
+  const [isConnectionInProcess, setIsConnectionInProcess] = useState(true);
 
-  const getProvider = useCallback(async () => {
-    if (!providerRef.current) {
-      const metaMaskProvider = await detectEthereumProvider()
-
-      if (!metaMaskProvider) {
-        throw new Error('Please, install MetaMask')
-      }
-
-      providerRef.current = new ethers.providers.Web3Provider(metaMaskProvider)
-    }
-
-    return providerRef.current
-  }, [])
+  useEffect(
+    () => {
+      detectEthereumProvider()
+        .then(
+          (metaMaskProvider) => {
+            if (metaMaskProvider) {
+              setProvider(new ethers.providers.Web3Provider(metaMaskProvider));
+            }
+            setTimeout(() => {
+              setIsConnectionInProcess(false); 
+            }, 1500);
+          }
+        )
+    },
+    []
+  )
 
   return (
-    <NetworkContext.Provider value={{ getProvider }}>
+    <NetworkContext.Provider value={{ provider, isConnectionInProcess }}>
       {children}
     </NetworkContext.Provider>
   )

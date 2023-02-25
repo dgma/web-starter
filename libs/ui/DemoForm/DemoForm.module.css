@@ -18,6 +18,14 @@
   align-self: center;
 }
 
+.utilsGroup {
+  display: flex;
+  width: 450px;
+  justify-content: space-between;
+  align-self: center;
+  padding: 10px;
+}
+
 .group {
   display: flex;
   padding: 10px;

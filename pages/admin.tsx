@@ -1,4 +1,3 @@
-import { useCallback } from 'react';
 import { ethers } from 'ethers';
 import Head from 'next/head'
 import Button from '@/libs/ui/Button';
@@ -9,16 +8,12 @@ import styles from '@/styles/main.module.css'
 
 const faucetAddress = deploymentLock.rabbit.Faucet.address;
 
-const btnStyle = {
-  'margin-top': '5rem'
-}
-
 export default function Demo() {
 
-  const { getProvider } = useNetworkProvider();
+  const { provider } = useNetworkProvider();
 
   const handleDepositPigmy = async () => {
-    const signer = (await getProvider()).getSigner();
+    const signer = provider?.getSigner();
     const contract = new ethers.Contract(faucetAddress, faucetAbi, signer);
     const ts = await contract.deposit({value: ethers.utils.parseEther("100")});
     await ts.wait(1);

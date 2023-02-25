@@ -14,5 +14,11 @@
 }
 
 .walletBtn {
-  border-radius: 3px;
+  border-radius: var(--btn-radius);
+  max-width: 250px;
+}
+
+.btnWrapper {
+  display: flex;
+  justify-content: center;
 }

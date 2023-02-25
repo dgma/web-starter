@@ -1,15 +1,16 @@
 import type { FC } from 'react';
-import Button from '@/libs/ui/Button';
 import ClockLoader from "react-spinners/ClockLoader";
+import Button from '@/libs/ui/Button';
+import { useWallet } from '@/libs/wallet';
+
 import styles from './Account.module.css';
 
-import { useWallet } from '../useWallet';
 
 interface AccountProps {
-  pending: boolean
+  pending: boolean;
 }
 
-export const Account: FC<AccountProps> = ({ pending }) => {
+const Account: FC<AccountProps> = ({ pending }) => {
   const { connectToMetaMask, currentAccount } = useWallet();
 
   const accountClassName = pending ? styles.spaceRight : '';
@@ -28,8 +29,12 @@ export const Account: FC<AccountProps> = ({ pending }) => {
   }
 
   return (
-    <Button onClick={connectToMetaMask} className={styles.walletBtn}>
-      Connect to MetaMask
-    </Button>
+    <div className={styles.btnWrapper}>
+      <Button onClick={connectToMetaMask} className={styles.walletBtn}>
+        Connect to MetaMask
+      </Button>
+    </div>
   );
 }
+
+export default Account

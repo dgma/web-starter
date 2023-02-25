@@ -2,8 +2,12 @@ import Head from 'next/head'
 import { Inter } from '@next/font/google'
 import styles from '@/styles/main.module.css'
 import { Demo } from '@/libs/ui/Demo';
+import { useNetworkProvider } from '@/libs/network'
+import SyncLoader from "react-spinners/SyncLoader";
 
 export default function DemoPage() {
+
+  const { isConnectionInProcess } = useNetworkProvider();
   
   return (
     <>
@@ -14,7 +18,13 @@ export default function DemoPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <Demo />
+        {
+          isConnectionInProcess 
+          ? <div className={styles.overlay}>
+              <SyncLoader color={"#037dd6"} />
+            </div>
+          : <Demo />
+        }
       </main>
     </>
   )
