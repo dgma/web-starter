@@ -77,8 +77,8 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   const handleGetPigmy = async () => {
     setTransactionPending(true);
     const addr = await provider.getSigner().getAddress();
-    const result = await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
-    await wait(20000);
+    await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
+    await wait(10000);
     setTransactionPending(false);
   };
 
