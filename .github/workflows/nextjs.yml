@@ -100,4 +100,4 @@ jobs:
         script: cd /root/web;
           docker build . -t web --build-arg NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }};
           docker rm -f web || true;
-          docker run --name web -d -p 80:80/tcp web:latest;
+          docker run --name web -d -p 8081:8081/tcp web:latest;
