@@ -5,6 +5,7 @@ import { ethers } from 'ethers'
 
 import Button from '@/libs/ui/Button';
 import { useNetworkProvider } from '@/libs/network'
+import { useWallet } from '@/libs/wallet';
 import { toBigNumERC20 } from '@/libs/decimals';
 
 import deploymentLock from '@dgma/protocol/deployment-lock.json'
@@ -25,6 +26,7 @@ interface DemoFormProps {
 
 const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPending}) => {
 
+  const { currentAccount } = useWallet();
   const provider = useNetworkProvider().provider as ethers.providers.JsonRpcProvider;
 
   const depositInput = useRef<HTMLInputElement>(null);
@@ -77,8 +79,12 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   const handleGetPigmy = async () => {
     setTransactionPending(true);
     const addr = await provider.getSigner().getAddress();
-    await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
-    await wait(10000);
+    const res  = await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
+    if (res.status === 200) {
+      await wait(10000);
+    } else {
+      alert('transaction failed');
+    }
     setTransactionPending(false);
   };
 
@@ -99,9 +105,10 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
 
   return (
     <div className={styles.root}>
-      <h3 className={styles.title}>PIGMY/USDgm Vault</h3>
+      <div className={currentAccount ? styles.inactiveOverlay : styles.activeOverlay}/>
+      <h3>PIGMY/USDgm Vault</h3>
       <p>You need to deposit PIGMY as collateral in order to mint USDgm</p>
-      <p>Minting Ratio is 1:1</p>
+      <p className={styles.padding}>Minting Ratio is 1:1</p>
       <div className={styles.row}>
         <div className={styles.group}>
           <input 

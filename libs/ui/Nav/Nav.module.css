@@ -27,14 +27,14 @@
   content: '';
   position: absolute;
   width: 100%;
-  transform: scaleY(0);
+  transform: scaleX(0);
   height: 1px;
-  bottom: 0;
+  bottom: -1px;
   left: 0;
-  background-color: #037dd6;
+  background-color: rgb(var(--foreground-rgb));
   transition: transform 0.25s ease-out;
 }
 
 .hoverUnderlineAnimation:hover::after {
-  transform: scaleY(1);
+  transform: scaleX(1);
 }
