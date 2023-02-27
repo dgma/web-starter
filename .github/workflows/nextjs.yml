@@ -22,6 +22,9 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+env:
+  NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   # Build job
   build:
@@ -30,9 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
-        run: export NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }};
-          docker compose down;
-          docker compose up --build -d
+        run: docker compose build;
   
   deploy:
     needs: build
@@ -57,8 +58,6 @@ jobs:
     - 
       name: Run Docker Container
       uses: appleboy/ssh-action@v0.1.7
-      env:
-        NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         host: ${{ secrets.REMOTE_HOST }}
         username: ${{ secrets.REMOTE_USER }}
