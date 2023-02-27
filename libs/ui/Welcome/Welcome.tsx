@@ -25,11 +25,14 @@ const Welcome: FC<{}> = () => {
       <h1 className={styles.title}>
         <Typewriter
           onInit={(typewriter) => {
-            typewriter.typeString('Welcome to the Dogma Protocol')
+            typewriter.typeString('Welcome to Dogma')
               .callFunction(() => {
                 setIsWelcomeMessageShowed(true);
               })
               .start();
+          }}
+          options={{
+            delay: 85
           }}
         />
       </h1>
