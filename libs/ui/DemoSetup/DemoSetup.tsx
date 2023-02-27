@@ -49,7 +49,7 @@ const DemoSetup: FC<DemoSetupProps> = ({}) => {
               Network params:
             </p>
             <p>
-              RPC: http://65.108.80.182:8545
+              RPC: https://dgma.dev:8443
             </p>
             <p>
               Chain Id: 189385242
