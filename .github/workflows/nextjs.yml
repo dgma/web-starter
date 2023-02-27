@@ -23,7 +23,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  NPM_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
 
 jobs:
   # Build job
