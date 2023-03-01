@@ -4,6 +4,8 @@ services:
   web:
     hostname: web
     image: web
+    environment:
+      - FACET_WALLET_PK=${FACET_WALLET_PK}
     build:
       context: .
       args:
