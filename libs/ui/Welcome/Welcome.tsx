@@ -1,25 +1,43 @@
-import type { FC } from 'react';
+import { FC } from 'react';
 import { useState } from 'react';
-import { Nav } from '@/libs/ui/Nav';
 import Typewriter from 'typewriter-effect';
+import Button from '@/libs/ui/Button';
+import { useRouter } from 'next/router'
+import { useWallet } from '@/libs/wallet';
 import styles from './Welcome.module.css';
 
-const links = [
-  {
-    href: 'https://drive.google.com/file/d/1ofUZO3uDC88Z8cfzmt1MdgTd6U_OSeXK/view?usp=share_link',
-    name: 'Lite Paper'
-  },
-  {
-    name: 'Executive Summary'
-  },
-  {
-    href: '/demo',
-    name: 'Demo App'
-  },
-]
+interface AppGatesProps {
+  isShowed: boolean,
+}
+
+const AppGates: FC<AppGatesProps> = ({ isShowed }) => {
+  const { connectToMetaMask, currentAccount } = useWallet();
+  const router = useRouter();
+
+  const btnClassName = isShowed ? `${styles.gates} ${styles.gatesShowed}` : `${styles.gates} ${styles.gatesHidden}`;
+
+  const openApp = () => router.push("/demo");
+
+  const connect = async () => {
+    const account = await connectToMetaMask();
+    if (account) {
+      openApp();
+    }
+  }
+
+  const onGate = currentAccount ? openApp : connect;
+  const gateMessage = currentAccount ? 'Open Demo App' : 'Connect to MetaMask';
+
+  return (
+    <Button onClick={onGate} className={btnClassName}>
+      {gateMessage}
+    </Button>
+  )
+}
 
 const Welcome: FC<{}> = () => {
   const [isWelcomeMessageShowed, setIsWelcomeMessageShowed] = useState(false);
+
   return (
     <div className={styles.root}>
       <h1 className={styles.title}>
@@ -36,7 +54,7 @@ const Welcome: FC<{}> = () => {
           }}
         />
       </h1>
-      <Nav isShowed={isWelcomeMessageShowed} links={links}/>
+      <AppGates isShowed={isWelcomeMessageShowed}/>
     </div>
   )
 }

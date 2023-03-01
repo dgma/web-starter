@@ -13,7 +13,7 @@ interface AccountProps {
 const Account: FC<AccountProps> = ({ pending }) => {
   const { connectToMetaMask, currentAccount } = useWallet();
 
-  const accountClassName = pending ? styles.spaceRight : '';
+  const accountClassName = pending ? `${styles.content} ${styles.spaceRight}` : styles.content;
 
   if (currentAccount) {
     return (
@@ -21,7 +21,7 @@ const Account: FC<AccountProps> = ({ pending }) => {
         <p className={accountClassName}>Address: {currentAccount}</p>
         <ClockLoader
           loading={pending}
-          color={"#037dd6"}
+          color={"gray"}
           size={20}
         />
       </div>

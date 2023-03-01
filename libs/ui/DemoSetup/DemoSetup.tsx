@@ -1,64 +1,50 @@
 import type { FC } from 'react';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { useWallet } from '@/libs/wallet';
-import { useNetworkProvider } from '@/libs/network'
+import { useNetworkProvider } from '@/libs/network';
+import Button from '@/libs/ui/Button';
 import styles from './DemoSetup.module.css'
 
 const targetChainId = '0xb49ca1a';
 
-interface DemoSetupProps {}
+interface DemoSetupProps {
+  isConnectedToProperNetwork: boolean
+}
 
-const DemoSetup: FC<DemoSetupProps> = ({}) => {
-
-  const [isConnectedToProperNetwork, setIsConnectedToProperNetwork] = useState(true);
+const DemoSetup: FC<DemoSetupProps> = ({ isConnectedToProperNetwork }) => {
 
   const { provider } = useNetworkProvider();
-  const { walletApp } = useWallet()
 
-  const checkNetwork = (chainId: string) => {
-    if (targetChainId !== chainId) {
-      setIsConnectedToProperNetwork(false);
-    } else {
-      setIsConnectedToProperNetwork(true);
+  const addNetwork = async () => {
+    try {
+      await provider?.send(
+        'wallet_addEthereumChain',
+        [{
+          chainId: targetChainId,
+          chainName: 'Rabbit network',
+          nativeCurrency: {
+            name: 'PYGMY',
+            symbol: 'PYGMY',
+            decimals: 18,
+          },
+          rpcUrls: ['https://dgma.dev:8443'],
+        }]
+      );
+    } catch (error) {
+      toast.error('Adding network was unsuccessful, please refresh page and try again')
     }
   }
-
-  useEffect(
-    () => {
-      provider?.send('eth_chainId', []).then(checkNetwork);
-      walletApp()?.on('chainChanged', checkNetwork);
-      return () => { 
-        walletApp()?.removeListener('chainChanged', checkNetwork); 
-      }
-    },
-    [walletApp, provider]
-  )
 
   if (!isConnectedToProperNetwork) {
     return (
       <div className={styles.root}>
-        <div className={styles.network}>
-          <p>
-            Insure that you metamask wallet connected to the Rabbit network
-          </p>
-          <p>
-            {`To add Rabbit network manually to metamask, open extension and go to 'settings > networks > add network'`}
-          </p>
-          <div className={styles.networkParams}>
-            <p>
-              Network params:
-            </p>
-            <p>
-              RPC: https://dgma.dev:8443
-            </p>
-            <p>
-              Chain Id: 189385242
-            </p>
-            <p>
-              Token: PYGMY
-            </p>
-          </div>
-        </div>
+        <p>
+          Insure that you metamask wallet connected to the Rabbit network
+        </p>
+        <Button onClick={addNetwork} className={styles.addNetwork}>
+          Add Rabbit Network
+        </Button>
       </div>
     )
   }

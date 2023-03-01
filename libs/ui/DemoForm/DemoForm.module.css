@@ -41,6 +41,7 @@
   border: 3px solid rgba(var(--foreground-rgb), 0.5);
   border-right: 0;
   transition: ease-in 50ms;
+  background: transparent;
 }
 
 .input:focus {

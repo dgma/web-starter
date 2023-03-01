@@ -7,6 +7,12 @@
   border-radius: var(--border-radius);
   display: flex;
   align-items: center;
+  line-height: 20px;
+  justify-content: center;
+}
+
+.content {
+  transition: all 500ms ease-out;
 }
 
 .spaceRight {

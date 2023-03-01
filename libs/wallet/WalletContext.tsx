@@ -12,20 +12,22 @@ interface Web3Provider {
 }
 
 interface AccountsContext {
-  connectToMetaMask: () => Promise<void>;
+  connectToMetaMask: () => Promise<string | null>;
   currentAccount: string;
   walletApp: () => Web3Provider | undefined;
+  isConnectionInProcess: boolean;
 }
 
 export const WalletContext = createContext<AccountsContext>({
-  connectToMetaMask: () => Promise.resolve(),
+  connectToMetaMask: () => Promise.resolve(null),
   currentAccount: '',
-  walletApp: () => undefined
+  walletApp: () => undefined,
+  isConnectionInProcess: false,
 });
 
 export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
   const [currentAccount, setCurrentAccount] = useState<string>('')
-  const { provider } = useNetworkProvider()
+  const { provider, isConnectionInProcess } = useNetworkProvider()
 
   const handleAccountsChanged = useCallback(([nextCurrentAccount]: string[]) => {
     setCurrentAccount(nextCurrentAccount)
@@ -61,11 +63,12 @@ export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
     if (provider) {
       const accounts = await provider.send('eth_requestAccounts', [])
       handleAccountsChanged(accounts);
-      return;
+      return accounts[0];
     }
 
     if (window !== undefined) {
       window.open('https://metamask.io/', '_blank')?.focus();
+      return null;
     }
   };
 
@@ -82,6 +85,7 @@ export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
       connectToMetaMask,
       currentAccount,
       walletApp,
+      isConnectionInProcess,
     }}>
       {children}
     </WalletContext.Provider>

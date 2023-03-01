@@ -27,9 +27,7 @@ const NetworkProvider: FC<PropsWithChildren> = ({ children }) => {
             if (metaMaskProvider) {
               setProvider(new ethers.providers.Web3Provider(metaMaskProvider));
             }
-            setTimeout(() => {
-              setIsConnectionInProcess(false); 
-            }, 1500);
+            setIsConnectionInProcess(false); 
           }
         )
     },

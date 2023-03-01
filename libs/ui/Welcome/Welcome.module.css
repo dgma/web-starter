@@ -11,3 +11,19 @@
 .title {
   text-align: center;
 }
+
+.gates {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  transition: opacity 1.5s ease-out;
+}
+
+.gatesShowed {
+  opacity: 1;
+}
+
+.gatesHidden {
+  opacity: 0;
+  visibility: hidden;
+}

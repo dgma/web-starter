@@ -1,6 +1,7 @@
 
 import type { FC, Dispatch, SetStateAction } from 'react';
 import { MouseEvent, useRef, useCallback } from 'react';
+import { toast } from 'react-toastify';
 import { ethers } from 'ethers'
 
 import Button from '@/libs/ui/Button';
@@ -10,6 +11,7 @@ import { toBigNumERC20 } from '@/libs/decimals';
 
 import deploymentLock from '@dgma/protocol/deployment-lock.json'
 import vaultFacetAbi from '@dgma/protocol/abi/contracts/app/facets/vaults.sol/VaultFacet.json';
+
 import styles from './DemoForm.module.css';
 
 const appDiamondAddress = deploymentLock.rabbit.AppDiamond.address;
@@ -43,64 +45,86 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   )
 
   const deposit = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const val = depositInput?.current?.value;
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
-    if (val) {
-      handleLoading(await contract.deposit({value: ethers.utils.parseEther(val)}))
+    try {
+      event.preventDefault();
+      const val = depositInput?.current?.value;
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
+      if (val) {
+        handleLoading(await contract.deposit({value: ethers.utils.parseEther(val)}))
+      }
+    } catch (error) {
+      toast.error((error as any)?.reason || 'Something went wrong')
     }
   }
   const withdraw = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
-    handleLoading(await contract.withdraw())
+    try {
+      event.preventDefault();
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
+      handleLoading(await contract.withdraw())
+    } catch (error) {
+      toast.error((error as any)?.reason || 'Something went wrong')
+    }
   }
   const mint = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const val = mintInput?.current?.value;
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer)
-    if (val) {
-      handleLoading(await contract.mint(toBigNumERC20(val), tokenAddress))
+    try {
+      event.preventDefault();
+      const val = mintInput?.current?.value;
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer)
+      if (val) {
+        handleLoading(await contract.mint(toBigNumERC20(val), tokenAddress))
+      }
+    } catch (error) {
+      toast.error((error as any)?.reason || 'Something went wrong')
     }
   }
   const burn = async (event: MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    const val = burnInput?.current?.value;
-    const signer = provider.getSigner();
-    const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
-    if (val) {
-      handleLoading(await contract.burn(toBigNumERC20(val), tokenAddress))
+    try {
+      event.preventDefault();
+      const val = burnInput?.current?.value;
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer);
+      if (val) {
+        handleLoading(await contract.burn(toBigNumERC20(val), tokenAddress))
+      }
+    } catch (error) {
+      toast.error((error as any)?.reason || 'Something went wrong')
     }
   }
 
   const handleGetPigmy = async () => {
     setTransactionPending(true);
-    const addr = await provider.getSigner().getAddress();
-    const res  = await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
-    if (res.status === 200) {
-      await wait(10000);
-    } else {
-      alert('transaction failed');
+    try {
+      const addr = await provider.getSigner().getAddress();
+      const res  = await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
+      if (res.status === 200) {
+        await wait(10000);
+      }
+    } catch (error) {
+      toast.error('Not enough coins in faucet')
     }
     setTransactionPending(false);
   };
 
   const addUSDgmToken = async () => {
-    const { ethereum } = window as any
-    await ethereum.request({
-      method: 'wallet_watchAsset',
-      params: {
-        type: 'ERC20',
-        options: {
-          address: tokenAddress,
-          symbol: 'USDgm',
-          decimals: 18,
+    try {
+      const { ethereum } = window as any
+      await ethereum.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: tokenAddress,
+            symbol: 'USDgm',
+            decimals: 18,
+          },
         },
-      },
-    })
+      })
+    } catch (error) {
+      toast.error('Something went wrong')
+    }
   }
 
   return (

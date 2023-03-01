@@ -2,20 +2,20 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 600px;
+
 }
 
-.network {
+.root {
   margin: 1rem 0;
   padding: 1rem;
   border: 1px solid rgba(var(--callout-border-rgb), 0.8);
   border-radius: var(--border-radius);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 600px;
 }
 
-.networkParams {
-  padding: 1rem;
-}
-
-.guideLink {
-  color: #037dd6;
+.addNetwork {
+  margin-top: 1rem;
 }
