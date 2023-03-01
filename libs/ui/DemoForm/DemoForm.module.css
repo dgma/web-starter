@@ -8,11 +8,11 @@
 }
 
 .root h3 {
-  padding-bottom: 5px;
+  padding-bottom: 20px;
 }
 
 .padding {
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 }
 
 .row {
@@ -33,6 +33,15 @@
 .group {
   display: flex;
   margin: 10px;
+}
+
+.vaultInfoTitle {
+  min-width: 250px;
+  text-align: left;
+}
+
+.vaultInfoValue {
+  flex-grow: 1;
 }
 
 .input {

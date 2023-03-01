@@ -18,7 +18,11 @@ export default function Demo({ isConnectedToProperNetwork }: DemoProps) {
     <div className={styles.root}>
       <Account pending={isTransactionPending} />
       <DemoSetup isConnectedToProperNetwork={isConnectedToProperNetwork} />
-      <DemoForm setTransactionPending={setTransactionPending} isTransactionPending={isTransactionPending} />
+      <DemoForm 
+        setTransactionPending={setTransactionPending} 
+        isTransactionPending={isTransactionPending}
+        isConnectedToProperNetwork={isConnectedToProperNetwork}
+      />
     </div>
   )
 }
