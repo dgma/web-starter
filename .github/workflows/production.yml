@@ -22,12 +22,12 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
-env:
-  NPM_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-
 jobs:
   # Build job
   build:
+    env:
+      NPM_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      FACET_WALLET_PK: ${{ secrets.FACET_WALLET_PK }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -63,7 +63,7 @@ jobs:
         username: ${{ secrets.REMOTE_USER }}
         key: ${{ secrets.SERVER_SSH_KEY }}
         script: 
-          export NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }};
+          export NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }} FACET_WALLET_PK=${{ secrets.FACET_WALLET_PK }};
           cd /root/web;
           docker compose down;
           docker compose up --build -d
