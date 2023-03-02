@@ -19,7 +19,7 @@ export default function DemoPage() {
 
   const [isConnectedToProperNetwork, setIsConnectedToProperNetwork] = useState(true);
 
-  const { walletApp } = useWallet()
+  const { walletApp } = useWallet();
 
   const initChain = useCallback(async () => {
     try {

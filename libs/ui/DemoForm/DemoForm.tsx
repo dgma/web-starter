@@ -5,7 +5,8 @@ import { toast } from 'react-toastify';
 import { ethers } from 'ethers'
 
 import Button from '@/libs/ui/Button';
-import { useNetworkProvider } from '@/libs/network'
+import { useNetworkProvider } from '@/libs/network';
+import { useWallet } from '@/libs/wallet';
 import { toBigNumERC20, fromBigNumERC20 } from '@/libs/decimals';
 
 import deploymentLock from '@dgma/protocol/deployment-lock.json'
@@ -46,6 +47,8 @@ interface DemoFormProps {
 const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPending, isConnectedToProperNetwork}) => {
 
   const { provider } = useNetworkProvider();
+  const { currentAccount } = useWallet();
+
   const contract = useVault();
 
   const depositInput = useRef<HTMLInputElement>(null);
@@ -80,12 +83,12 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
 
   useEffect(
     () => {
-      if (isConnectedToProperNetwork) {
+      if (isConnectedToProperNetwork && currentAccount) {
         updateDepositInfo();
         updateDebtInfo();
       }
     },
-    [updateDepositInfo, updateDebtInfo, isConnectedToProperNetwork]
+    [updateDepositInfo, updateDebtInfo, isConnectedToProperNetwork, currentAccount]
   )
 
   const deposit = async (event: MouseEvent<HTMLButtonElement>) => {
@@ -95,6 +98,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
         const ts = await safeContractCall(contract.deposit({value: ethers.utils.parseEther(val)}));
         await ts?.wait(1);
         updateDepositInfo();
+        (depositInput.current as HTMLInputElement).value = "";
       }
       handleLoading(promise())
     }
@@ -114,6 +118,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
         const ts = await safeContractCall(contract.mint(toBigNumERC20(val), tokenAddress));
         await ts?.wait(1);
         updateDebtInfo();
+        (mintInput.current as HTMLInputElement).value = "";
       }
       handleLoading(promise())
     }
@@ -125,6 +130,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
         const ts = await safeContractCall(contract.burn(toBigNumERC20(val), tokenAddress));
         await ts?.wait(1);
         updateDebtInfo();
+        (burnInput.current as HTMLInputElement).value = "";
       }
       handleLoading(promise())
     }
@@ -168,6 +174,8 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
     }
   };
 
+  const isFormDisabled = isTransactionPending || !isConnectedToProperNetwork || !currentAccount
+
   return (
     <div className={styles.root}>
       <h3>PIGMY/USDgm Vault</h3>
@@ -190,12 +198,12 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
             placeholder="amount to deposit, PIGMY" 
             className={styles.input} 
             ref={depositInput}
-            disabled={isTransactionPending || !isConnectedToProperNetwork}
+            disabled={isFormDisabled}
           />
           <Button 
             className={styles.btn} 
             onClick={deposit}
-            disabled={isTransactionPending || !isConnectedToProperNetwork}
+            disabled={isFormDisabled}
           >
               Deposit
           </Button>
@@ -209,7 +217,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
           <Button 
             className={styles.btn} 
             onClick={withdraw}
-            disabled={isTransactionPending || !isConnectedToProperNetwork}
+            disabled={isFormDisabled}
           >
             Withdraw
           </Button>
@@ -222,11 +230,11 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
             placeholder="amount to mint, USDgm" 
             className={styles.input} 
             ref={mintInput}
-            disabled={isTransactionPending || !isConnectedToProperNetwork}/>
+            disabled={isFormDisabled}/>
           <Button 
             className={styles.btn} 
             onClick={mint}
-            disabled={isTransactionPending || !isConnectedToProperNetwork}
+            disabled={isFormDisabled}
           >
             Mint
           </Button>
@@ -237,19 +245,19 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
             placeholder="amount to burn, USDgm" 
             className={styles.input} 
             ref={burnInput}
-            disabled={isTransactionPending || !isConnectedToProperNetwork}/>
+            disabled={isFormDisabled}/>
           <Button 
             className={styles.btn} 
             onClick={burn}
-            disabled={isTransactionPending || !isConnectedToProperNetwork}
+            disabled={isFormDisabled}
           >
             Burn
           </Button>
         </div>
       </div>
       <div className={styles.utilsGroup}>
-        <Button onClick={handleGetPigmy} disabled={isTransactionPending || !isConnectedToProperNetwork}> Get PIGMY </Button>
-        <Button onClick={addUSDgmToken} disabled={!isConnectedToProperNetwork}>Add USDgm to metamask</Button>
+        <Button onClick={handleGetPigmy} disabled={isFormDisabled}> Get PIGMY </Button>
+        <Button onClick={addUSDgmToken} disabled={isFormDisabled}>Add USDgm to metamask</Button>
       </div>
     </div>
   )

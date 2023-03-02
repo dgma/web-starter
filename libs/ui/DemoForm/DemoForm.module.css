@@ -58,6 +58,10 @@
   border-bottom: 3px solid rgba(var(--foreground-rgb), 0.7);
 }
 
+.input:disabled {
+  cursor: no-drop;
+}
+
 .btn {
   flex-grow: 1;
 }

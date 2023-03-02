@@ -14,3 +14,7 @@
 .root:hover:enabled {
   border: 3px solid rgba(var(--foreground-rgb), 0.7);
 }
+
+.root:disabled {
+  cursor: no-drop;
+}
