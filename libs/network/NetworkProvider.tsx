@@ -3,7 +3,7 @@ import type { FC, PropsWithChildren } from 'react';
 import { ethers } from 'ethers'
 import detectEthereumProvider from '@metamask/detect-provider';
 
-export type Provider = ethers.providers.JsonRpcProvider | undefined;
+export type Provider = ethers.providers.Web3Provider | undefined;
 
 export interface NetworkProviderContext {
   provider: Provider;

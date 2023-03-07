@@ -48,7 +48,7 @@ interface DemoFormProps {
 const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPending, isConnectedToProperNetwork}) => {
 
   const { provider } = useNetworkProvider();
-  const { currentAccount } = useWallet();
+  const { currentAccount, walletApp } = useWallet();
 
   const contract = useVault();
 
@@ -157,21 +157,33 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
 
   const addUSDgmToken = async () => {
     try {
-      await provider?.send(
-        'wallet_watchAsset',
-        [
-          {
-            type: 'ERC20',
-            options: {
-              address: tokenAddress,
-              symbol: 'USDgm',
-              decimals: 18,
-            },
-          }
-        ]
-      )
+      await (walletApp() as any)?.request({
+        method: 'wallet_watchAsset',
+        params: {
+          type: 'ERC20',
+          options: {
+            address: tokenAddress,
+            symbol: 'USDgm',
+            decimals: 18,
+          },
+        }
+      })
+      // provider api does not support sending non-array params yet
+      // await provider?.send(
+      //   'wallet_watchAsset',
+      //   [
+      //     {
+      //       type: 'ERC20',
+      //       options: {
+      //         address: tokenAddress,
+      //         symbol: 'USDgm',
+      //         decimals: 18,
+      //       },
+      //     }
+      //   ]
+      // )
     } catch (error) {
-      toast.error('Something went wrong')
+      toast.error('Error when adding token')
     }
   };
 
