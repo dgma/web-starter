@@ -34,7 +34,8 @@ async function safeContractCall<T = ethers.providers.TransactionResponse>(contra
     const result = await contractCall;
     return result;
   } catch (error) {
-    toast.error((error as any)?.reason || 'Something went wrong')
+    toast.error((error as any)?.reason || 'Something went wrong');
+    console.error(error)
   }
 }
 

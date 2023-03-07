@@ -54,7 +54,8 @@ const Welcome: FC<{}> = () => {
           }}
         />
       </h1>
-      <AppGates isShowed={isWelcomeMessageShowed}/>
+      {/* <AppGates isShowed={isWelcomeMessageShowed}/> */}
+      Site under maintenance, will be open 8 March 00:00
     </div>
   )
 }

@@ -4,6 +4,11 @@ services:
   web:
     hostname: web
     image: web
+    logging:
+      driver: "json-file"
+      options:
+        max-file: "5"
+        max-size: "100m"
     environment:
       - FACET_WALLET_PK=${FACET_WALLET_PK}
     build:
