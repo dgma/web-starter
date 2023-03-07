@@ -11,6 +11,10 @@ import { useEffect, useState, useCallback } from 'react';
 const targetChainId = '0xb49ca1a';
 const reload = () => { window.location.reload(); };
 
+const wait = (ms: number): Promise<void> => new Promise((res) => {
+  setTimeout(res, ms);
+});
+
 export default function DemoPage() {
 
   const { provider } = useNetworkProvider();
@@ -23,31 +27,32 @@ export default function DemoPage() {
 
   const initChain = useCallback(async () => {
     try {
-      const chainID = await provider?.send('eth_chainId', []);
+      // const resetTimer = setTimeout(reload, 3000);
+      const [chainID] = await Promise.all(
+        [provider?.send('eth_chainId', []), wait(1000)]);
+      // clearTimeout(resetTimer)
       if (targetChainId !== chainID) {
         setIsConnectedToProperNetwork(false);
       } else {
         setIsConnectedToProperNetwork(true);
       }
+      setShowLoader(false);
     } catch (error) {
-      toast.error('Cannot check network');
-    } finally {
-      return setTimeout(() => {
-        setShowLoader(false);
-      }, 1000);
+      setShowLoader(false);
+      toast.error('Cannot check network, please refresh page');
+      console.error('Cannot check network');
     }
   }, [provider])
 
   useEffect(
     () => {
-      let timeout: NodeJS.Timeout;
-      initChain().then(timer => { timeout = timer });
-      walletApp()?.on('chainChanged', reload);
+      initChain().then(
+        () => {
+          walletApp()?.on('chainChanged', reload);
+        }
+      );
       return () => { 
         walletApp()?.removeListener('chainChanged', reload); 
-        if (timeout) {
-          clearTimeout(timeout)
-        }
       }
     },
     [walletApp, provider, initChain]
