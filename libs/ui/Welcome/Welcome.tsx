@@ -8,10 +8,10 @@ import { useWallet } from '@/libs/wallet';
 import styles from './Welcome.module.css';
 
 interface AppGatesProps {
-  isShowed: boolean,
+  className?: string;
 }
 
-const AppGates: FC<AppGatesProps> = ({ isShowed }) => {
+const AppGates: FC<AppGatesProps> = ({ className }) => {
   const { connectToMetaMask, currentAccount } = useWallet();
   const router = useRouter();
 
@@ -22,8 +22,6 @@ const AppGates: FC<AppGatesProps> = ({ isShowed }) => {
       onboarding.current = new MetaMaskOnboarding();
     }
   }, []);
-
-  const btnClassName = isShowed ? `${styles.gates} ${styles.gatesShowed}` : `${styles.gates} ${styles.gatesHidden}`;
 
   const openApp = () => router.push("/demo");
 
@@ -51,14 +49,17 @@ const AppGates: FC<AppGatesProps> = ({ isShowed }) => {
   const message = currentAccount ? 'Open Demo App' : 'Connect to MetaMask';
 
   return (
-    <Button onClick={onClick} className={btnClassName}>
+    <Button onClick={onClick} className={className}>
       {message}
+      <div className='' />
     </Button>
   )
 }
 
 const Welcome: FC<{}> = () => {
   const [isWelcomeMessageShowed, setIsWelcomeMessageShowed] = useState(false);
+
+  const btnClassName = isWelcomeMessageShowed ? `${styles.gates} ${styles.gatesShowed}` : `${styles.gates} ${styles.gatesHidden}`;
 
   return (
     <div className={styles.root}>
@@ -76,7 +77,7 @@ const Welcome: FC<{}> = () => {
           }}
         />
       </h1>
-      <AppGates isShowed={isWelcomeMessageShowed}/>
+      <AppGates className={btnClassName} />
     </div>
   )
 }
