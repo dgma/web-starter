@@ -1,5 +1,6 @@
-import { FC } from 'react';
+import { FC, useRef, useEffect } from 'react';
 import { useState } from 'react';
+import MetaMaskOnboarding from '@metamask/onboarding';
 import Typewriter from 'typewriter-effect';
 import Button from '@/libs/ui/Button';
 import { useRouter } from 'next/router'
@@ -14,23 +15,44 @@ const AppGates: FC<AppGatesProps> = ({ isShowed }) => {
   const { connectToMetaMask, currentAccount } = useWallet();
   const router = useRouter();
 
+  const onboarding = useRef<MetaMaskOnboarding>();
+
+  useEffect(() => {
+    if (!onboarding.current) {
+      onboarding.current = new MetaMaskOnboarding();
+    }
+  }, []);
+
   const btnClassName = isShowed ? `${styles.gates} ${styles.gatesShowed}` : `${styles.gates} ${styles.gatesHidden}`;
 
   const openApp = () => router.push("/demo");
 
   const connect = async () => {
-    const account = await connectToMetaMask();
-    if (account) {
-      openApp();
+    if (MetaMaskOnboarding.isMetaMaskInstalled()) {
+      const account = await connectToMetaMask();
+    
+      if (account) {
+        openApp();
+      }
+    } else {
+      onboarding.current?.startOnboarding();
     }
   }
 
-  const onGate = currentAccount ? openApp : connect;
-  const gateMessage = currentAccount ? 'Open Demo App' : 'Connect to MetaMask';
+  const onClick = () => {
+    if (currentAccount) {
+      openApp();
+      return;
+    }
+    
+    connect();
+  };
+  
+  const message = currentAccount ? 'Open Demo App' : 'Connect to MetaMask';
 
   return (
-    <Button onClick={onGate} className={btnClassName}>
-      {gateMessage}
+    <Button onClick={onClick} className={btnClassName}>
+      {message}
     </Button>
   )
 }
