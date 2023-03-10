@@ -14,16 +14,14 @@
 
 .gates {
   margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  transition: opacity 1.5s ease-out;
+
+  animation-duration: 1s;
+  animation-name: animate-fade;
+  animation-delay: 0.5s;
+  animation-fill-mode: backwards;
 }
 
-.gatesShowed {
-  opacity: 1;
-}
-
-.gatesHidden {
-  opacity: 0;
-  visibility: hidden;
+@keyframes animate-fade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
 }
