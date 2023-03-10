@@ -31,7 +31,10 @@ const verifyChain = async (provider: ethers.providers.Web3Provider) => {
 const checkIsVaultOpened = async (currentAccount: string, isConnectedToProperNetwork: boolean, contract: ethers.Contract) => {
   if (currentAccount && isConnectedToProperNetwork) {
     try {
-      return await contract.accountOpened(synth, collateralToken)
+      const resetTimer = setTimeout(reload, 4000);
+      const isVaultOpened =  await contract.accountOpened(synth, collateralToken);
+      clearTimeout(resetTimer);
+      return isVaultOpened;
     } catch (error) {
       throw new Error((error as any)?.reason || 'Something went wrong');
     }
@@ -65,7 +68,6 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   const verification = useCallback(
     async () => {
       try {
-        console.log('run verification')
         if (currentAccount && provider) {
           console.log('start verification');
           const isConnectedToProperNetwork = await verifyChain(provider);
