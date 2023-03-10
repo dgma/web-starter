@@ -1,28 +1,21 @@
-import { useState } from 'react';
+import type { FC } from 'react';
 import { DemoSetup } from '@/libs/ui/DemoSetup';
-import { DemoForm } from '@/libs/ui/DemoForm';
-import { Nav } from '@/libs/ui/Nav';
+import { DemoVault } from '@/libs/ui/DemoVault';
 import { Account } from '@/libs/ui/Account';
 import styles from './Demo.module.css'
 
-interface DemoProps {
-  isConnectedToProperNetwork: boolean
-}
+interface DemoProps {}
 
 
-export default function Demo({ isConnectedToProperNetwork }: DemoProps) {
-
-  const [isTransactionPending, setTransactionPending] = useState(false);
+const Demo: FC<DemoProps> = () => {
 
   return (
     <div className={styles.root}>
-      <Account pending={isTransactionPending} />
-      <DemoSetup isConnectedToProperNetwork={isConnectedToProperNetwork} />
-      <DemoForm 
-        setTransactionPending={setTransactionPending} 
-        isTransactionPending={isTransactionPending}
-        isConnectedToProperNetwork={isConnectedToProperNetwork}
-      />
+      <Account />
+      <DemoSetup />
+      <DemoVault />
     </div>
   )
 }
+
+export default Demo;
