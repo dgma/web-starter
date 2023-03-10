@@ -50,20 +50,28 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
     setIsConnectedToProperNetwork 
   } = useNetwork();
 
+  console.log('provider:', provider)
+
   const {
     connectToMetaMask,
     currentAccount,
     walletApp,
   } = useWallet(provider);
 
+  console.log('walletApp:', walletApp)
+
   const contract = useVault(provider);
 
   const verification = useCallback(
     async () => {
       try {
+        console.log('run verification')
         if (currentAccount && provider) {
+          console.log('start verification');
           const isConnectedToProperNetwork = await verifyChain(provider);
+          console.log('isConnectedToProperNetwork', isConnectedToProperNetwork);
           const isVaultOpened = await checkIsVaultOpened(currentAccount, isConnectedToProperNetwork, contract);
+          console.log('isVaultOpened', isVaultOpened);
           setIsConnectedToProperNetwork(isConnectedToProperNetwork);
           setVaultOpened(!!isVaultOpened);
         }
