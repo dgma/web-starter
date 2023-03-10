@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
 import Typewriter from 'typewriter-effect';
 import MetaMaskOnboarding from '@metamask/onboarding';
-import { useWallet } from '@/libs/wallet';
+import { useApp } from '@/libs/context/app';
 
 import WelcomeButton from './WelcomeButton';
 
@@ -10,7 +10,7 @@ import styles from './Welcome.module.css';
 
 const Welcome: FC = () => {
   const [isWelcomeButtonShowed, setIsWelcomeButtonShowed] = useState(false);
-  const { currentAccount } = useWallet();
+  const { currentAccount } = useApp();
 
   const onboarding = useRef<MetaMaskOnboarding>();
 

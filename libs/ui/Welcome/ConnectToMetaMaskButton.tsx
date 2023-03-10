@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import { useWallet } from '@/libs/wallet';
+import { useApp } from '@/libs/context/app';
 import Button from '@/libs/ui/Button';
 
 interface ConnecctToMetaMaskButtonProps {
@@ -8,7 +8,7 @@ interface ConnecctToMetaMaskButtonProps {
 }
 
 const ConnectToMetaMaskButton: FC<ConnecctToMetaMaskButtonProps> = ({ className, openApp }) => {
-  const { connectToMetaMask } = useWallet();
+  const { connectToMetaMask } = useApp();
 
   const onClick = async () => {
     const account = await connectToMetaMask();
