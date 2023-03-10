@@ -1,29 +1,25 @@
-import { useEffect, useRef } from 'react';
 import type { FC } from 'react';
 import Button from '@/libs/ui/Button';
-import MetaMaskOnboarding from '@metamask/onboarding';
+
+import styles from './InstallMetaMaskButton.module.css';
 
 interface ConnecctToMetaMaskButtonProps {
   className?: string;
+  startOnboarding: () => void;
 }
 
-const InstallMetaMaskButton: FC<ConnecctToMetaMaskButtonProps> = ({ className }) => {
-  const onboarding = useRef<MetaMaskOnboarding>();
-
-  useEffect(() => {
-    if (!onboarding.current) {
-      onboarding.current = new MetaMaskOnboarding();
-    }
-  }, []);
-
+const InstallMetaMaskButton: FC<ConnecctToMetaMaskButtonProps> = ({ className, startOnboarding }) => {
   const onClick = () => {
-    onboarding.current?.startOnboarding();
+    startOnboarding();
   };
 
   return (
-    <Button onClick={onClick} className={className}>
-      Install MetaMask
-    </Button>
+    <div className={`${className} ${styles.root}`}>
+      <p>You need to install MetaMask before start using Dogma</p>
+      <Button onClick={onClick}>
+        Install MetaMask
+      </Button>
+    </div>
   );
 };
 

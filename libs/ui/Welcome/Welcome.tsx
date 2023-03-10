@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
 import Typewriter from 'typewriter-effect';
+import MetaMaskOnboarding from '@metamask/onboarding';
+import { useWallet } from '@/libs/wallet';
 
 import WelcomeButton from './WelcomeButton';
 
@@ -8,6 +10,25 @@ import styles from './Welcome.module.css';
 
 const Welcome: FC = () => {
   const [isWelcomeButtonShowed, setIsWelcomeButtonShowed] = useState(false);
+  const { currentAccount } = useWallet();
+
+  const onboarding = useRef<MetaMaskOnboarding>();
+
+  const startOnboarding = () => {
+    onboarding.current?.startOnboarding();
+  };
+
+  useEffect(() => {
+    if (!onboarding.current) {
+      onboarding.current = new MetaMaskOnboarding();
+    }
+  }, []);
+
+  useEffect(() => {
+    if (MetaMaskOnboarding.isMetaMaskInstalled() && currentAccount) {
+      onboarding.current?.stopOnboarding();
+    }
+  }, [currentAccount]);
 
   return (
     <div className={styles.root}>
@@ -25,7 +46,7 @@ const Welcome: FC = () => {
           }}
         />
       </h1>
-      {isWelcomeButtonShowed && <WelcomeButton />}
+      {isWelcomeButtonShowed && <WelcomeButton currentAccount={currentAccount} startOnboarding={startOnboarding} />}
     </div>
   )
 }
