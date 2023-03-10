@@ -1,42 +1,34 @@
-import { FC } from 'react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import type { FC } from 'react';
 import Typewriter from 'typewriter-effect';
-import Button from '@/libs/ui/Button';
-import { useRouter } from 'next/router'
+import MetaMaskOnboarding from '@metamask/onboarding';
 import { useApp } from '@/libs/context/app';
+
+import WelcomeButton from './WelcomeButton';
+
 import styles from './Welcome.module.css';
 
-interface AppGatesProps {
-  isShowed: boolean,
-}
+const Welcome: FC = () => {
+  const [isWelcomeButtonShowed, setIsWelcomeButtonShowed] = useState(false);
+  const { currentAccount } = useApp();
 
-const AppGates: FC<AppGatesProps> = ({ isShowed }) => {
-  const { connectToMetaMask, currentAccount } = useApp();
-  const router = useRouter();
+  const onboarding = useRef<MetaMaskOnboarding>();
 
-  const btnClassName = isShowed ? `${styles.gates} ${styles.gatesShowed}` : `${styles.gates} ${styles.gatesHidden}`;
+  const startOnboarding = () => {
+    onboarding.current?.startOnboarding();
+  };
 
-  const openApp = () => router.push("/demo");
-
-  const connect = async () => {
-    const account = await connectToMetaMask();
-    if (account) {
-      openApp();
+  useEffect(() => {
+    if (!onboarding.current) {
+      onboarding.current = new MetaMaskOnboarding();
     }
-  }
+  }, []);
 
-  const onGate = currentAccount ? openApp : connect;
-  const gateMessage = currentAccount ? 'Open Demo App' : 'Connect to MetaMask';
-
-  return (
-    <Button onClick={onGate} className={btnClassName}>
-      {gateMessage}
-    </Button>
-  )
-}
-
-const Welcome: FC<{}> = () => {
-  const [isWelcomeMessageShowed, setIsWelcomeMessageShowed] = useState(false);
+  useEffect(() => {
+    if (MetaMaskOnboarding.isMetaMaskInstalled() && currentAccount) {
+      onboarding.current?.stopOnboarding();
+    }
+  }, [currentAccount]);
 
   return (
     <div className={styles.root}>
@@ -45,7 +37,7 @@ const Welcome: FC<{}> = () => {
           onInit={(typewriter) => {
             typewriter.typeString('Welcome to Dogma')
               .callFunction(() => {
-                setIsWelcomeMessageShowed(true);
+                setIsWelcomeButtonShowed(true);
               })
               .start();
           }}
@@ -54,7 +46,7 @@ const Welcome: FC<{}> = () => {
           }}
         />
       </h1>
-      <AppGates isShowed={isWelcomeMessageShowed}/>
+      {isWelcomeButtonShowed && <WelcomeButton currentAccount={currentAccount} startOnboarding={startOnboarding} />}
     </div>
   )
 }
