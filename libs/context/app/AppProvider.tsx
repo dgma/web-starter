@@ -45,8 +45,7 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   const [showLoader, setShowLoader] = useState(true); 
 
   const {
-    provider, 
-    isConnectionInProcess, 
+    provider,  
     isConnectedToProperNetwork, 
     setIsConnectedToProperNetwork 
   } = useNetwork();
@@ -62,7 +61,7 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   const verification = useCallback(
     async () => {
       try {
-        if (!isConnectionInProcess && provider) {
+        if (currentAccount && provider) {
           const isConnectedToProperNetwork = await verifyChain(provider);
           const isVaultOpened = await checkIsVaultOpened(currentAccount, isConnectedToProperNetwork, contract);
           setIsConnectedToProperNetwork(isConnectedToProperNetwork);
@@ -73,7 +72,7 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
         console.log(error);
       }
     }, 
-    [isConnectionInProcess, setIsConnectedToProperNetwork, provider, currentAccount, contract]
+    [setIsConnectedToProperNetwork, provider, currentAccount, contract]
   )
 
   useEffect(
@@ -100,8 +99,7 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
       value={{ 
         isTransactionPending, 
         setTransactionPending,
-        provider, 
-        isConnectionInProcess, 
+        provider,  
         isConnectedToProperNetwork, 
         setIsConnectedToProperNetwork,
         connectToMetaMask,
