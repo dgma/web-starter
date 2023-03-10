@@ -1,56 +1,30 @@
 
-import type { FC, Dispatch, SetStateAction } from 'react';
-import { MouseEvent, useRef, useCallback, useState, useMemo, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import type { FC } from 'react';
+import { MouseEvent, useRef, useCallback, useState, useEffect } from 'react';
 import { ethers } from 'ethers'
 
 import Button from '@/libs/ui/Button';
-import { useNetworkProvider } from '@/libs/network';
-import { useWallet } from '@/libs/wallet';
+import { useApp } from '@/libs/context/app';
 import { toBigNumERC20, fromBigNumERC20 } from '@/libs/decimals';
+import useVault from '@/libs/hooks/useVault';
+import { synth, collateralToken } from '@/libs/constants';
+import { safeContractCall } from '@/libs/utils';
 
-import deploymentLock from '@dgma/protocol/deployment-lock.json'
-import vaultFacetAbi from '@dgma/protocol/abi/contracts/app/facets/vaults.sol/VaultFacet.json';
+import styles from './VaultDesk.module.css';
 
-import styles from './DemoForm.module.css';
+interface VaultDeskProps {}
 
-const appDiamondAddress = deploymentLock.rabbit.AppDiamond.address;
-const tokenAddress = deploymentLock.rabbit.USDgmTokenDiamond.address;
+const VaultDesk: FC<VaultDeskProps> = () => {
 
-const wait = (ms: number) => new Promise((res) => {
-  setTimeout(res, ms);
-});
+  const { 
+    currentAccount, 
+    provider, 
+    setTransactionPending, 
+    isTransactionPending, 
+    isConnectedToProperNetwork 
+  } = useApp();
 
-function useVault() {
-  const { provider } = useNetworkProvider();
-  return useMemo(() => {
-    const signer = provider?.getSigner();
-    return new ethers.Contract(appDiamondAddress, vaultFacetAbi, signer)
-  }, [provider]);
-}
-
-async function safeContractCall<T = ethers.providers.TransactionResponse>(contractCall: Promise<T>) {
-  try {
-    const result = await contractCall;
-    return result;
-  } catch (error) {
-    toast.error((error as any)?.reason || 'Something went wrong');
-    console.error(error)
-  }
-}
-
-interface DemoFormProps {
-  setTransactionPending: Dispatch<SetStateAction<boolean>>
-  isTransactionPending: boolean
-  isConnectedToProperNetwork: boolean
-}
-
-const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPending, isConnectedToProperNetwork}) => {
-
-  const { provider } = useNetworkProvider();
-  const { currentAccount, walletApp } = useWallet();
-
-  const contract = useVault();
+  const contract = useVault(provider);
 
   const depositInput = useRef<HTMLInputElement>(null);
   const mintInput = useRef<HTMLInputElement>(null);
@@ -69,14 +43,14 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   );
 
   const updateDepositInfo = useCallback(async () => {
-    const collateral = await safeContractCall<ethers.BigNumber>(contract.balanceOfDeposit());
+    const collateral = await safeContractCall<ethers.BigNumber>(contract.balanceOfDeposit(synth, collateralToken));
     if (!!collateral) {
       setCollateral(fromBigNumERC20(collateral).toString());
     }
   }, [contract])
 
   const updateDebtInfo = useCallback(async () => {
-    const debt = await safeContractCall<ethers.BigNumber>(contract.balanceOfDebt());
+    const debt = await safeContractCall<ethers.BigNumber>(contract.balanceOfDebt(synth, collateralToken));
     if (debt) {
       setDebt(fromBigNumERC20(debt).toString());
     }
@@ -96,7 +70,9 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
     const val = depositInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(contract.deposit({value: ethers.utils.parseEther(val)}));
+        const ts = await safeContractCall(
+          contract.depositNative(synth, collateralToken, {value: ethers.utils.parseEther(val)})
+        );
         await ts?.wait(1);
         updateDepositInfo();
         (depositInput.current as HTMLInputElement).value = "";
@@ -106,7 +82,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
   }
   const withdraw = async (event: MouseEvent<HTMLButtonElement>) => {
     const promise = async () => {
-      const ts = await safeContractCall(contract.withdraw());
+      const ts = await safeContractCall(contract.withdrawNative(synth, collateralToken));
       await ts?.wait(1);
       updateDepositInfo();
     }
@@ -116,7 +92,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
     const val = mintInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(contract.mint(toBigNumERC20(val), tokenAddress));
+        const ts = await safeContractCall(contract.mint(synth, collateralToken, toBigNumERC20(val)));
         await ts?.wait(1);
         updateDebtInfo();
         (mintInput.current as HTMLInputElement).value = "";
@@ -128,7 +104,7 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
     const val = burnInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(contract.burn(toBigNumERC20(val), tokenAddress));
+        const ts = await safeContractCall(contract.burn(synth, collateralToken, toBigNumERC20(val)));
         await ts?.wait(1);
         updateDebtInfo();
         (burnInput.current as HTMLInputElement).value = "";
@@ -137,61 +113,10 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
     }
   }
 
-  const handleGetPigmy = useCallback(async () => {
-    try {
-      const promise = async () => {
-        const addr = await provider?.getSigner().getAddress();
-        const res  = await fetch(`${window.location.origin}/api/getTokens?addr=${addr}`);
-        if (res.status === 200) {
-          await wait(10000);
-          toast.success('100 PIGMY sent to your wallet!')
-        } else {
-          toast.error('Not enough coins in faucet')
-        }
-      }
-      handleLoading(promise())
-    } catch (error) {
-      toast.error('Something went wrong')
-    }
-  }, [provider, handleLoading]);
-
-  const addUSDgmToken = async () => {
-    try {
-      await (walletApp() as any)?.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: tokenAddress,
-            symbol: 'USDgm',
-            decimals: 18,
-          },
-        }
-      })
-      // provider api does not support sending non-array params yet
-      // await provider?.send(
-      //   'wallet_watchAsset',
-      //   [
-      //     {
-      //       type: 'ERC20',
-      //       options: {
-      //         address: tokenAddress,
-      //         symbol: 'USDgm',
-      //         decimals: 18,
-      //       },
-      //     }
-      //   ]
-      // )
-    } catch (error) {
-      toast.error('Error when adding token')
-    }
-  };
-
   const isFormDisabled = isTransactionPending || !isConnectedToProperNetwork || !currentAccount
 
   return (
     <div className={styles.root}>
-      <h3>PIGMY/USDgm Vault</h3>
       <p>You need to deposit PIGMY as collateral in order to mint USDgm</p>
       <p className={styles.padding}>Minting Ratio is 1:1</p>
       <div className={styles.row}>
@@ -268,12 +193,8 @@ const DemoForm: FC<DemoFormProps> = ({setTransactionPending, isTransactionPendin
           </Button>
         </div>
       </div>
-      <div className={styles.utilsGroup}>
-        <Button onClick={handleGetPigmy} disabled={isFormDisabled}> Get PIGMY </Button>
-        <Button onClick={addUSDgmToken} disabled={isFormDisabled}>Add USDgm to metamask</Button>
-      </div>
     </div>
   )
 };
 
-export default DemoForm;
+export default VaultDesk;

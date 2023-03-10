@@ -1,6 +1,5 @@
-import { useCallback, createContext, useEffect, useState } from 'react';
-import type { FC, PropsWithChildren } from 'react';
-import { useNetworkProvider } from '@/libs/network';
+import { useCallback, useEffect, useState } from 'react';
+import { ethers } from 'ethers'
 
 interface Web3Provider {
   once(eventName: string | symbol, listener: (...args: any[]) => void): this;
@@ -11,23 +10,8 @@ interface Web3Provider {
   removeAllListeners(event?: string | symbol): this;
 }
 
-interface AccountsContext {
-  connectToMetaMask: () => Promise<string | null>;
-  currentAccount: string;
-  walletApp: () => Web3Provider | undefined;
-  isConnectionInProcess: boolean;
-}
-
-export const WalletContext = createContext<AccountsContext>({
-  connectToMetaMask: () => Promise.resolve(null),
-  currentAccount: '',
-  walletApp: () => undefined,
-  isConnectionInProcess: false,
-});
-
-export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
+export const useWallet = (provider?: ethers.providers.Web3Provider) => {
   const [currentAccount, setCurrentAccount] = useState<string>('')
-  const { provider, isConnectionInProcess } = useNetworkProvider()
 
   const handleAccountsChanged = useCallback(([nextCurrentAccount]: string[]) => {
     setCurrentAccount(nextCurrentAccount)
@@ -80,14 +64,9 @@ export const WalletProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   }, [provider, getAccounts, listenAccounts, unlistenAccounts]);
 
-  return (
-    <WalletContext.Provider value={{
-      connectToMetaMask,
-      currentAccount,
-      walletApp,
-      isConnectionInProcess,
-    }}>
-      {children}
-    </WalletContext.Provider>
-  )
+  return {
+    connectToMetaMask,
+    currentAccount,
+    walletApp,
+  }
 };

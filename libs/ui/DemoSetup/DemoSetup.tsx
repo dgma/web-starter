@@ -1,20 +1,16 @@
 import type { FC } from 'react';
-import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
-import { useWallet } from '@/libs/wallet';
-import { useNetworkProvider } from '@/libs/network';
+import { useApp } from '@/libs/context/app';
 import Button from '@/libs/ui/Button';
 import styles from './DemoSetup.module.css'
 
 const targetChainId = '0xb49ca1a';
 
-interface DemoSetupProps {
-  isConnectedToProperNetwork: boolean
-}
+interface DemoSetupProps {}
 
-const DemoSetup: FC<DemoSetupProps> = ({ isConnectedToProperNetwork }) => {
+const DemoSetup: FC<DemoSetupProps> = () => {
 
-  const { provider } = useNetworkProvider();
+  const { provider, isConnectedToProperNetwork } = useApp();
 
   const addNetwork = async () => {
     try {

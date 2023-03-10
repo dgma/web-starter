@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Typewriter from 'typewriter-effect';
 import Button from '@/libs/ui/Button';
 import { useRouter } from 'next/router'
-import { useWallet } from '@/libs/wallet';
+import { useApp } from '@/libs/context/app';
 import styles from './Welcome.module.css';
 
 interface AppGatesProps {
@@ -11,7 +11,7 @@ interface AppGatesProps {
 }
 
 const AppGates: FC<AppGatesProps> = ({ isShowed }) => {
-  const { connectToMetaMask, currentAccount } = useWallet();
+  const { connectToMetaMask, currentAccount } = useApp();
   const router = useRouter();
 
   const btnClassName = isShowed ? `${styles.gates} ${styles.gatesShowed}` : `${styles.gates} ${styles.gatesHidden}`;
