@@ -64,12 +64,13 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
       try {
         if (!isConnectionInProcess && provider) {
           const isConnectedToProperNetwork = await verifyChain(provider);
-          setIsConnectedToProperNetwork(isConnectedToProperNetwork);
           const isVaultOpened = await checkIsVaultOpened(currentAccount, isConnectedToProperNetwork, contract);
-          setVaultOpened(isVaultOpened);
+          setIsConnectedToProperNetwork(isConnectedToProperNetwork);
+          setVaultOpened(!!isVaultOpened);
         }
       } catch (error) {
         toast.error((error as Error)?.message);
+        console.log(error);
       }
     }, 
     [isConnectionInProcess, setIsConnectedToProperNetwork, provider, currentAccount, contract]
