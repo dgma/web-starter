@@ -23,11 +23,13 @@ const WelcomeButton: FC<WelcomeButtonProps> = ({ currentAccount, startOnboarding
   const btnClassName = `${styles.welcomeButton}`;
 
   if (MetaMaskOnboarding.isMetaMaskInstalled()) {
-    return <ConnectToMetaMaskButton className={btnClassName} openApp={openApp} />
-  } else if (!currentAccount) {
-    return <InstallMetaMaskButton className={btnClassName} startOnboarding={startOnboarding} />
+    if (!currentAccount) {
+      return <ConnectToMetaMaskButton className={btnClassName} openApp={openApp} />
+    } else {
+      return <OpenAppButton className={btnClassName} openApp={openApp} />
+    } 
   } else {
-    return <OpenAppButton className={btnClassName} openApp={openApp} />
+    return <InstallMetaMaskButton className={btnClassName} startOnboarding={startOnboarding} />
   } 
 }
 
