@@ -13,10 +13,14 @@
   text-align: center;
 }
 
+.hiddenBtn {
+  visibility: hidden;
+}
+
 .welcomeButton {
   animation-duration: 1s;
   animation-name: animate-fade;
-  animation-delay: 0.5s;
+  animation-delay: 0.25s;
   animation-fill-mode: backwards;
 }
 

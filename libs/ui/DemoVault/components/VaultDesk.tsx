@@ -5,8 +5,8 @@ import { ethers } from 'ethers'
 
 import Button from '@/libs/ui/Button';
 import { useApp } from '@/libs/context/app';
-import { toBigNumERC20, fromBigNumERC20 } from '@/libs/decimals';
 import useVault from '@/libs/hooks/useVault';
+import useOracle from '@/libs/hooks/useOracle';
 import { synth, collateralToken } from '@/libs/constants';
 import { safeContractCall } from '@/libs/utils';
 
@@ -25,12 +25,14 @@ const VaultDesk: FC<VaultDeskProps> = () => {
   } = useApp();
 
   const contract = useVault(provider);
+  const oracle = useOracle(provider);
 
   const depositInput = useRef<HTMLInputElement>(null);
   const mintInput = useRef<HTMLInputElement>(null);
   const burnInput = useRef<HTMLInputElement>(null);
 
   const [collateral, setCollateral] = useState("0");
+  const [collateralPrice, setCollateralPrice] = useState("0");
   const [debt, setDebt] = useState("0");
 
   const handleLoading = useCallback(
@@ -44,15 +46,19 @@ const VaultDesk: FC<VaultDeskProps> = () => {
 
   const updateDepositInfo = useCallback(async () => {
     const collateral = await safeContractCall<ethers.BigNumber>(contract.balanceOfDeposit(synth, collateralToken));
-    if (!!collateral) {
-      setCollateral(fromBigNumERC20(collateral).toString());
+    const price = await safeContractCall<ethers.BigNumber>(oracle.latestRoundData());
+    if (price) {
+      setCollateralPrice(ethers.utils.formatEther(price));
     }
-  }, [contract])
+    if (!!collateral) {
+      setCollateral(ethers.utils.formatEther(collateral));
+    }
+  }, [contract, oracle])
 
   const updateDebtInfo = useCallback(async () => {
     const debt = await safeContractCall<ethers.BigNumber>(contract.balanceOfDebt(synth, collateralToken));
     if (debt) {
-      setDebt(fromBigNumERC20(debt).toString());
+      setDebt(ethers.utils.formatEther(debt));
     }
   }, [contract])
 
@@ -92,7 +98,7 @@ const VaultDesk: FC<VaultDeskProps> = () => {
     const val = mintInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(contract.mint(synth, collateralToken, toBigNumERC20(val)));
+        const ts = await safeContractCall(contract.mint(synth, collateralToken, ethers.utils.parseUnits(val)));
         await ts?.wait(1);
         updateDebtInfo();
         (mintInput.current as HTMLInputElement).value = "";
@@ -104,7 +110,7 @@ const VaultDesk: FC<VaultDeskProps> = () => {
     const val = burnInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(contract.burn(synth, collateralToken, toBigNumERC20(val)));
+        const ts = await safeContractCall(contract.burn(synth, collateralToken, ethers.utils.parseUnits(val)));
         await ts?.wait(1);
         updateDebtInfo();
         (burnInput.current as HTMLInputElement).value = "";
@@ -113,12 +119,13 @@ const VaultDesk: FC<VaultDeskProps> = () => {
     }
   }
 
-  const isFormDisabled = isTransactionPending || !isConnectedToProperNetwork || !currentAccount
+  const isFormDisabled = isTransactionPending || !isConnectedToProperNetwork || !currentAccount;
+  const availableToMint = Number(collateral) * Number(collateralPrice) - Number(debt);
 
   return (
     <div className={styles.root}>
       <p>You need to deposit PIGMY as collateral in order to mint USDgm</p>
-      <p className={styles.padding}>Minting Ratio is 1:1</p>
+      <p className={styles.padding}>{`PIGMY oracle price is ${collateralPrice} USD`}</p>
       <div className={styles.row}>
         <div className={styles.group}>
           <p className={styles.vaultInfoTitle}>PIGMY locked in vault:</p>
@@ -127,6 +134,10 @@ const VaultDesk: FC<VaultDeskProps> = () => {
         <div className={styles.group}>
           <p className={styles.vaultInfoTitle}>Issued USDgm debt:</p>
           <p className={styles.vaultInfoValue}>{debt}</p>
+        </div>
+        <div className={styles.group}>
+          <p className={styles.vaultInfoTitle}>Available to mint</p>
+          <p className={styles.vaultInfoValue}>{availableToMint}</p>
         </div>
       </div>
       <div className={styles.row}>

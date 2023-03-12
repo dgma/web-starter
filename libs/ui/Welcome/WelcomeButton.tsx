@@ -11,16 +11,19 @@ import styles from './Welcome.module.css';
 interface WelcomeButtonProps {
   currentAccount?: string;
   startOnboarding: () => void;
+  show: boolean
 }
 
-const WelcomeButton: FC<WelcomeButtonProps> = ({ currentAccount, startOnboarding }) => {
+const WelcomeButton: FC<WelcomeButtonProps> = ({ currentAccount, startOnboarding, show }) => {
   const router = useRouter();
 
   const openApp = () => {
     router.push('/demo');
   }
 
-  const btnClassName = `${styles.welcomeButton}`;
+  const btnClassName = show ? `${styles.welcomeButton}` : styles.hiddenBtn;
+
+  console.log('btnClassName', btnClassName)
 
   if (MetaMaskOnboarding.isMetaMaskInstalled()) {
     if (!currentAccount) {

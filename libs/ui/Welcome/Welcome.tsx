@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import type { FC } from 'react';
+import dynamic from 'next/dynamic'
 import Typewriter from 'typewriter-effect';
 import MetaMaskOnboarding from '@metamask/onboarding';
 import { useApp } from '@/libs/context/app';
 
-import WelcomeButton from './WelcomeButton';
-
 import styles from './Welcome.module.css';
+
+const WelcomeButton = dynamic(() => import('./WelcomeButton'), {
+  ssr: false,
+})
 
 const Welcome: FC = () => {
   const [isWelcomeButtonShowed, setIsWelcomeButtonShowed] = useState(false);
@@ -46,7 +49,11 @@ const Welcome: FC = () => {
           }}
         />
       </h1>
-      {isWelcomeButtonShowed && <WelcomeButton currentAccount={currentAccount} startOnboarding={startOnboarding} />}
+      <WelcomeButton 
+        currentAccount={currentAccount} 
+        startOnboarding={startOnboarding} 
+        show={isWelcomeButtonShowed}
+      />
     </div>
   )
 }

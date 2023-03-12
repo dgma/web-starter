@@ -53,15 +53,11 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
     setIsConnectedToProperNetwork 
   } = useNetwork();
 
-  console.log('provider:', provider)
-
   const {
     connectToMetaMask,
     currentAccount,
     walletApp,
   } = useWallet(provider);
-
-  console.log('walletApp:', walletApp)
 
   const contract = useVault(provider);
 

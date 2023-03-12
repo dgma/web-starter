@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import styles from '@/styles/main.module.css'
-// import { Welcome } from '@/libs/ui/Welcome';
-// import { ToastContainer } from 'react-toastify';
+import { Welcome } from '@/libs/ui/Welcome';
+import { ToastContainer } from 'react-toastify';
 
 export default function HomePage() {
   return (
@@ -13,9 +13,8 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        Website is under maintenance until 14.03.2023
-        {/* <Welcome/>
-        <ToastContainer theme="colored"/> */}
+        <Welcome/>
+        <ToastContainer theme="colored"/>
       </main>
     </>
   )

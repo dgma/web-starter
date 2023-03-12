@@ -102,20 +102,22 @@ const DemoVault: FC<DemoVaultProps> = () => {
     return (
       vaultOpened
       ? <VaultDesk />
-      : (<div className={styles.group}>
-        <div className={styles.grow}>
-          <Typewriter
-            onInit={(typewriter) => {
-              typewriter.typeString('In order to operate with Vault you need to open it')
-                .start();
-            }}
-            options={{
-              delay: 85,
-            }}
-          />
+      : (
+        <div className={styles.group}>
+          <div className={styles.grow}>
+            <Typewriter
+              onInit={(typewriter) => {
+                typewriter.typeString('In order to operate with Vault you need to open it')
+                  .start();
+              }}
+              options={{
+                delay: 85,
+              }}
+            />
+          </div>
+          <Button onClick={handleOpenVault} disabled={isFormDisabled}> Open Vault </Button>
         </div>
-        <Button onClick={handleOpenVault} disabled={isFormDisabled}> Open Vault </Button>
-      </div>)
+      )
     )
   }
 

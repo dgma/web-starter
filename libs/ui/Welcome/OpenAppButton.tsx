@@ -12,7 +12,7 @@ const OpenAppButton: FC<OpenAppButtonProps> = ({ className, openApp }) => {
   };
 
   return (
-    <Button onClick={onClick}>
+    <Button onClick={onClick} className={className}>
       Open Demo App
     </Button>
   );
