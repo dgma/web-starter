@@ -21,7 +21,7 @@ services:
     ports:
       - "80:80"
     networks:
-       pub-shared-net:
+      pub-shared-net:
 
 networks:
   pub-shared-net:
