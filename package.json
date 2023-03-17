@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@dgma/protocol": "0.1.4-monkey",
+    "@dgma/protocol": "0.1.5",
     "@metamask/detect-provider": "2.0.0",
     "@metamask/onboarding": "1.0.1",
     "@next/font": "13.1.6",
