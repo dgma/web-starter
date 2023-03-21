@@ -51,7 +51,7 @@ jobs:
         REMOTE_USER: ${{ secrets.REMOTE_USER }}
         TARGET: /root/web  
         SCRIPT_BEFORE: |
-          ls -al
+          rm -rf web
         SCRIPT_AFTER: |
           ls -al
           echo $RSYNC_STDOUT
