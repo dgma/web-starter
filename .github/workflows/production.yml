@@ -66,5 +66,6 @@ jobs:
           export NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }} FACET_WALLET_PK=${{ secrets.FACET_WALLET_PK }} SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} SENTRY_DSN=${{ secrets.SENTRY_DSN }} NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }};
           cd /root/web;
           docker compose down;
-          docket compose build;
+          docker builder prune -a -f;
+          docker compose build;
           docker compose up -d
