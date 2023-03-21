@@ -9,7 +9,8 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" > .npmrc && \
     npm ci && \
-    rm -f .npmrc
+    rm -f .npmrc \
+    cat package.json
 
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
