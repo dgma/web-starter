@@ -9,8 +9,7 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN echo "//npm.pkg.github.com/:_authToken=$NPM_TOKEN" > .npmrc && \
     npm ci && \
-    rm -f .npmrc \
-    cat package.json
+    rm -f .npmrc
 
 # Rebuild the source code only when needed
 FROM node:16-alpine AS builder
@@ -20,7 +19,7 @@ COPY . .
 
 ENV NEXT_TELEMETRY_DISABLED 1
 
-RUN yarn build
+RUN npm run build
 
 # If using npm comment out above and use below instead
 # RUN npm run build
