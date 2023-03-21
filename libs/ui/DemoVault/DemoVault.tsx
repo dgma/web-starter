@@ -14,7 +14,10 @@ import { synth, collateralToken } from '@/libs/constants';
 
 import styles from './DemoVault.module.css';
 
-interface DemoVaultProps {}
+interface MetamaskInteractionError {
+  message?: string
+}
+interface DemoVaultProps {};
 
 const DemoVault: FC<DemoVaultProps> = () => {
 
@@ -29,14 +32,15 @@ const DemoVault: FC<DemoVaultProps> = () => {
     setVaultOpened,
   } = useApp();
 
-  const contract = useVault(provider);
+  const vault = useVault(provider);
 
   const handleOpenVault = useCallback(async () => {
       setTransactionPending(true);
       const ts = await safeContractCall(
-        contract.open(
+        vault.open(
           synth,
           collateralToken,
+          currentAccount,
           {value: ethers.utils.parseEther("0.1")}
         )
       );
@@ -44,7 +48,7 @@ const DemoVault: FC<DemoVaultProps> = () => {
       setTransactionPending(false);
       setVaultOpened(true)
     },
-    [setTransactionPending, contract, setVaultOpened]
+    [setTransactionPending, vault, currentAccount, setVaultOpened]
   )
 
   const handleGetPigmy = useCallback(async () => {
@@ -60,7 +64,7 @@ const DemoVault: FC<DemoVaultProps> = () => {
       }
       setTransactionPending(false);
     } catch (error) {
-      toast.error('Something went wrong')
+      toast.error((error as MetamaskInteractionError)?.message || 'Get pigmy: something went wrong')
     }
   }, [provider, setTransactionPending]);
 
@@ -92,7 +96,7 @@ const DemoVault: FC<DemoVaultProps> = () => {
       //   ]
       // )
     } catch (error) {
-      toast.error('Error when adding token')
+      toast.error((error as MetamaskInteractionError)?.message || 'Error when adding token')
     }
   };
 

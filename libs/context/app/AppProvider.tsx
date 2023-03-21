@@ -32,7 +32,7 @@ const checkIsVaultOpened = async (currentAccount: string, isConnectedToProperNet
   if (currentAccount && isConnectedToProperNetwork) {
     try {
       const resetTimer = setTimeout(reload, 4000);
-      const isVaultOpened =  await contract.isAccountOpened(synth, collateralToken);
+      const isVaultOpened =  await contract.isAccountOpened(synth, collateralToken, currentAccount);
       clearTimeout(resetTimer);
       return isVaultOpened;
     } catch (error) {
