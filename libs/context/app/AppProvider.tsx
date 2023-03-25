@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback, createContext } from "react";
 import type { FC, PropsWithChildren } from "react";
+import dynamic from 'next/dynamic'
 import { ethers } from 'ethers'
 import { toast } from 'react-toastify';
 import { useNetwork } from './useNetwork'
@@ -121,4 +122,4 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export default AppProvider;
+export default dynamic(() => Promise.resolve(AppProvider), { ssr: false });
