@@ -1,4 +1,5 @@
 import type { FC } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useApp } from '@/libs/context/app';
 import Button from '@/libs/ui/Button';
@@ -11,6 +12,14 @@ interface DemoSetupProps {}
 const DemoSetup: FC<DemoSetupProps> = () => {
 
   const { provider, isConnectedToProperNetwork } = useApp();
+
+  useEffect(
+    () => { 
+      toast.info('This is a demo app, don\'t hesitate to refresh the page is something goes wrong' );
+      return () => { console.log('unmount') }
+    }, 
+    []
+  );
 
   const addNetwork = async () => {
     try {

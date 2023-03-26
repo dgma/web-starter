@@ -45,8 +45,9 @@ const DemoVault: FC<DemoVaultProps> = () => {
         )
       );
       await ts?.wait(1);
+      const isVaultOpened =  await vault.isAccountOpened(synth, collateralToken, currentAccount);
       setTransactionPending(false);
-      setVaultOpened(true)
+      setVaultOpened(isVaultOpened)
     },
     [setTransactionPending, vault, currentAccount, setVaultOpened]
   )

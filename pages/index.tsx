@@ -1,7 +1,6 @@
 import Head from 'next/head'
 import styles from '@/styles/main.module.css'
 import { Welcome } from '@/libs/ui/Welcome';
-import { ToastContainer } from 'react-toastify';
 
 export default function HomePage() {
   return (
@@ -14,7 +13,6 @@ export default function HomePage() {
       </Head>
       <main className={styles.main}>
         <Welcome/>
-        <ToastContainer theme="colored"/>
       </main>
     </>
   )
