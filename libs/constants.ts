@@ -8,6 +8,13 @@ export const networkName: NetworkName = process?.env?.NETWORK_NAME as NetworkNam
 export const chainId = process?.env?.CHAIN_ID_HEX || '0x658d8';
 export const rpc = process?.env?.RPC || 'https://dev.dgma.dev:8441';
 
+console.log(`
+  config:
+  networkName: ${networkName}
+  chainId: ${chainId}
+  rpc: ${rpc}
+`)
+
 export const collateralOracle = deploymentLock[networkName]?.ETHFakeOracle?.address;
 export const synth = deploymentLock[networkName]?.USDgmTokenDiamond?.address;
 export const collateralToken = deploymentLock[networkName]?.WETH10?.address;

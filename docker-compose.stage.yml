@@ -1,9 +1,9 @@
 version: '3.7'
 
 services:
-  web:
+  web-stg:
     hostname: web
-    image: web
+    image: web-stg
     logging:
       driver: "json-file"
       options:

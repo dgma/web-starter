@@ -55,10 +55,8 @@ jobs:
         script: 
           export NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }} FACET_WALLET_PK=${{ secrets.FACET_WALLET_PK }} SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} SENTRY_DSN=${{ secrets.SENTRY_DSN }} NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }} RPC=${{ secrets.RPC_STG }} CHAIN_ID_HEX=${{ secrets.CHAIN_ID_HEX_STG }};
           cd /root/web;
-          rm docker-compose.yml;
-          mv docker-compose.stage.yml docker-compose.yml;
-          docker compose down;
+          docker compose -f docker-compose.stage.yml down;
           docker builder prune -a -f;
           docker image prune -a -f;
-          docker compose build --no-cache;
-          docker compose up -d
+          docker compose -f docker-compose.stage.yml build --no-cache;
+          docker compose -f docker-compose.stage.yml up -d
