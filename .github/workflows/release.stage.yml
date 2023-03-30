@@ -1,0 +1,74 @@
+# Sample workflow for building and deploying a Next.js site to GitHub Pages
+#
+# To get started with Next.js see: https://nextjs.org/docs/getting-started
+#
+name: Build and Deploy
+
+on:
+  # Runs on pushes targeting the default branch
+  push:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  # Build job
+  build:
+    env:
+      NPM_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
+      FACET_WALLET_PK: ${{ secrets.FACET_WALLET_PK }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build
+        run: docker compose build --no-cache;
+  
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - 
+      name: Deploy
+      uses: easingthemes/ssh-deploy@main
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        ARGS: "-rltgoDzvO"
+        SOURCE: "."
+        REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+        REMOTE_USER: ${{ secrets.REMOTE_USER }}
+        TARGET: /root/web  
+        SCRIPT_BEFORE: |
+          rm -rf web
+        SCRIPT_AFTER: |
+          ls -al
+          echo $RSYNC_STDOUT
+    - 
+      name: Run Docker Container
+      uses: appleboy/ssh-action@v0.1.7
+      with:
+        host: ${{ secrets.REMOTE_HOST }}
+        username: ${{ secrets.REMOTE_USER }}
+        key: ${{ secrets.SERVER_SSH_KEY }}
+        script: 
+          export NPM_TOKEN=${{ secrets.PERSONAL_GITHUB_TOKEN }} FACET_WALLET_PK=${{ secrets.FACET_WALLET_PK }} SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }} SENTRY_DSN=${{ secrets.SENTRY_DSN }} NEXT_PUBLIC_SENTRY_DSN=${{ secrets.SENTRY_DSN }} RPC=${{ RPC_STG }} CHAIN_ID_HEX=${{ CHAIN_ID_HEX_STG }};
+          cd /root/web;
+          rm docker-compose.yml;
+          mv docker-compose.stage.yml docker-compose.yml;
+          docker compose down;
+          docker builder prune -a -f;
+          docker image prune -a -f;
+          docker compose build --no-cache;
+          docker compose up -d

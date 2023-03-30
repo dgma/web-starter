@@ -6,11 +6,10 @@ import { toast } from 'react-toastify';
 import { useNetwork } from './useNetwork'
 import { useWallet } from './useWallet';
 import { wait, reload } from '@/libs/utils';
-import { synth, collateralToken } from '@/libs/constants';
+import { synth, collateralToken, chainId } from '@/libs/constants';
 
 import useVault from "@/libs/hooks/useVault";
 
-const targetChainId = '0xb49ca1a';
 
 export const AppContext = createContext<any>({
   isTransactionPending: false,
@@ -23,7 +22,7 @@ const verifyChain = async (provider: ethers.providers.Web3Provider) => {
     const [chainID] = await Promise.all(
       [provider.send('eth_chainId', []), wait(1000)]);
     clearTimeout(resetTimer)
-    return targetChainId === chainID;
+    return chainId === chainID;
   } catch (error) {
     throw new Error("Cannot check network, please refresh page");
   }

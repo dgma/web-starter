@@ -3,9 +3,8 @@ import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 import { useApp } from '@/libs/context/app';
 import Button from '@/libs/ui/Button';
+import { networkName, chainId, rpc } from '@/libs/constants';
 import styles from './DemoSetup.module.css'
-
-const targetChainId = '0xb49ca1a';
 
 interface DemoSetupProps {}
 
@@ -16,24 +15,24 @@ const DemoSetup: FC<DemoSetupProps> = () => {
   useEffect(
     () => { 
       toast.info('This is a demo app, don\'t hesitate to refresh the page is something goes wrong' );
-      return () => { console.log('unmount') }
     }, 
     []
   );
 
   const addNetwork = async () => {
+    console.log('hello', provider);
     try {
       await provider?.send(
         'wallet_addEthereumChain',
         [{
-          chainId: targetChainId,
-          chainName: 'Rabbit network',
+          chainId: chainId,
+          chainName: networkName,
           nativeCurrency: {
             name: 'PYGMY',
             symbol: 'PYGMY',
             decimals: 18,
           },
-          rpcUrls: ['https://dgma.dev:8443'],
+          rpcUrls: [rpc],
         }]
       );
     } catch (error) {

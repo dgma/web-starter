@@ -16,13 +16,13 @@ services:
       - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
       - SENTRY_DSN=${SENTRY_DSN}
       - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
-      - NETWORK_NAME=rabbit.dev
+      - NETWORK_NAME=rabbit.stg
     build:
       context: .
       args:
         - NPM_TOKEN=${NPM_TOKEN}
     ports:
-      - "8081:8081"
+      - "8080:8080"
     networks:
       pub-shared-net:
 
