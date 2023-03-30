@@ -1,4 +1,4 @@
-name: Build and Deploy to Dev ENV
+name: CD to Dev ENV
 
 on:
   push:
