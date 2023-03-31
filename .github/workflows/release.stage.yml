@@ -17,7 +17,8 @@ jobs:
   build:
     env:
       NPM_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
-      FACET_WALLET_PK: ${{ secrets.FACET_WALLET_PK }}
+      RPC: random.rpc.com:8545
+      CHAIN_ID_HEX: 0x888888
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

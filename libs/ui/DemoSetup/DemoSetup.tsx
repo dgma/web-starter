@@ -20,7 +20,6 @@ const DemoSetup: FC<DemoSetupProps> = () => {
   );
 
   const addNetwork = async () => {
-    console.log('hello', provider);
     try {
       await provider?.send(
         'wallet_addEthereumChain',

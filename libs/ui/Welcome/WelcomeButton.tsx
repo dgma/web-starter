@@ -23,8 +23,6 @@ const WelcomeButton: FC<WelcomeButtonProps> = ({ currentAccount, startOnboarding
 
   const btnClassName = show ? `${styles.welcomeButton}` : styles.hiddenBtn;
 
-  console.log('btnClassName', btnClassName)
-
   if (MetaMaskOnboarding.isMetaMaskInstalled()) {
     if (!currentAccount) {
       return <ConnectToMetaMaskButton className={btnClassName} openApp={openApp} />

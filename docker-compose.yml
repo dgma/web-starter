@@ -11,17 +11,17 @@ services:
         max-size: "100m"
     environment:
       - FACET_WALLET_PK=${FACET_WALLET_PK}
+      - PORT=8081
+    build:
+      context: .
+      args:
+      - NPM_TOKEN=${NPM_TOKEN}
       - RPC=${RPC}
       - CHAIN_ID_HEX=${CHAIN_ID_HEX}
       - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
       - SENTRY_DSN=${SENTRY_DSN}
       - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
       - NETWORK_NAME=rabbit.dev
-      - PORT=8081
-    build:
-      context: .
-      args:
-        - NPM_TOKEN=${NPM_TOKEN}
     ports:
       - "8081:8081"
     expose:

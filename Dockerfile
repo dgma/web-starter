@@ -17,6 +17,13 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
+ARG RPC
+ARG CHAIN_ID_HEX
+ARG NETWORK_NAME
+ARG SENTRY_AUTH_TOKEN
+ARG SENTRY_DSN
+ARG NEXT_PUBLIC_SENTRY_DSN
+
 ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN npm run build
@@ -29,8 +36,7 @@ FROM node:16-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV production
-# Uncomment the following line in case you want to disable telemetry during runtime.
-# ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED 1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
