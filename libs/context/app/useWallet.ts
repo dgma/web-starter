@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ethers } from 'ethers'
 
-interface Web3Provider {
-  once(eventName: string | symbol, listener: (...args: any[]) => void): this;
-  on(eventName: string | symbol, listener: (...args: any[]) => void): this;
-  off(eventName: string | symbol, listener: (...args: any[]) => void): this;
-  addListener(eventName: string | symbol, listener: (...args: any[]) => void): this;
-  removeListener(eventName: string | symbol, listener: (...args: any[]) => void): this;
-  removeAllListeners(event?: string | symbol): this;
+export interface UseWalletResult {
+  connectToMetaMask: () => Promise<string | null>;
+  currentAccount?: string;
+  walletApp: () => ethers.providers.Web3Provider | undefined;
 }
 
-export const useWallet = (provider?: ethers.providers.Web3Provider) => {
+export const useWallet = (provider?: ethers.providers.Web3Provider): UseWalletResult => {
   const [currentAccount, setCurrentAccount] = useState<string>('')
 
   const handleAccountsChanged = useCallback(([nextCurrentAccount]: string[]) => {
@@ -20,7 +17,7 @@ export const useWallet = (provider?: ethers.providers.Web3Provider) => {
   const walletApp = useCallback(
     () => {
       if (window !== undefined && provider) {
-        return (window as any).ethereum as Web3Provider
+        return (window as any).ethereum as ethers.providers.Web3Provider
       }
     },
     [provider]

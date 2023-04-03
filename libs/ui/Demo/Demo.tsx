@@ -11,9 +11,9 @@ interface DemoProps {}
 
 const Demo: FC<DemoProps> = () => {
 
-  const {showLoader, vaultOpened} = useApp();
+  const { showLoader} = useApp();
 
-  if (showLoader || vaultOpened === undefined) {
+  if (showLoader) {
     return (
       <div className={styles.overlay}>
         <SyncLoader color={"gray"} />

@@ -1,41 +1,26 @@
-
 import type { FC } from 'react';
-import { MouseEvent, useRef, useCallback, useState, useEffect } from 'react';
-import { ethers } from 'ethers'
+import { useRef, useCallback } from 'react';
 
 import Button from '@/libs/ui/Button';
 import { useApp } from '@/libs/context/app';
-import useVault from '@/libs/hooks/useVault';
-import useOracle from '@/libs/hooks/useOracle';
-import { synth, collateralToken } from '@/libs/constants';
-import { safeContractCall } from '@/libs/utils';
+
+import { useBurn, useDeposit, useGetBalanceOfCollateral, useGetBalanceOfDebt, useGetMaxMint, useMint, useWithdraw } from '@/app/feature/vault';
+import { useGetLatestEthPrice } from '@/app/feature/oracles';
 
 import styles from './VaultDesk.module.css';
 
-interface VaultDeskProps { }
-
-const VaultDesk: FC<VaultDeskProps> = () => {
-
+const VaultDesk: FC = () => {
   const {
     currentAccount,
-    provider,
     setTransactionPending,
     isTransactionPending,
     isConnectedToProperNetwork
   } = useApp();
 
-  const vault = useVault(provider);
-  const oracle = useOracle(provider);
-
   const depositInput = useRef<HTMLInputElement>(null);
   const withdrawInput = useRef<HTMLInputElement>(null);
   const mintInput = useRef<HTMLInputElement>(null);
   const burnInput = useRef<HTMLInputElement>(null);
-
-  const [collateral, setCollateral] = useState("0");
-  const [collateralPrice, setCollateralPrice] = useState("0");
-  const [debt, setDebt] = useState("0");
-  const [availableToMint, setAvailableToMint] = useState("0");
 
   const handleLoading = useCallback(
     async (wait: Promise<any>) => {
@@ -46,119 +31,58 @@ const VaultDesk: FC<VaultDeskProps> = () => {
     [setTransactionPending]
   );
 
-  const updateAvailableToMintInfo = useCallback(async () => {
-    const availableToMint = await safeContractCall<ethers.BigNumber>(vault.maxMint(synth, collateralToken, currentAccount));
-    if (!!availableToMint) {
-      setAvailableToMint(ethers.utils.formatEther(availableToMint))
-    }
-  }, [vault, currentAccount])
+  const availableToMint = useGetMaxMint()
+  const balanceOfCollateral = useGetBalanceOfCollateral()
+  const balanceOfDebt = useGetBalanceOfDebt()
+  const { latestEthPrice: collateralPrice } = useGetLatestEthPrice()
+  const { deposit } = useDeposit()
+  const { withdraw } = useWithdraw()
+  const { burn } = useBurn()
+  const { mint } = useMint()
 
-  const updateDepositInfo = useCallback(async () => {
-    const collateral = await safeContractCall<ethers.BigNumber>(vault.balanceOfCollateral(synth, collateralToken, currentAccount));
-    if (!!collateral) {
-      setCollateral(ethers.utils.formatEther(collateral));
-    }
-  }, [vault, currentAccount])
-
-  const updateDebtInfo = useCallback(async () => {
-    const debt = await safeContractCall<ethers.BigNumber>(vault.balanceOfDebt(synth, collateralToken, currentAccount));
-    if (!!debt) {
-      setDebt(ethers.utils.formatEther(debt));
-    }
-  }, [vault, currentAccount]);
-
-  const updatePrice = useCallback(
-    async () => {
-      const price = await safeContractCall<ethers.BigNumber>(oracle.latestRoundData());
-      if (price) {
-        setCollateralPrice(ethers.utils.formatEther(price));
-      }
-    },
-    [oracle]
-  );
-
-  useEffect(
-    () => {
-      const intervalTimer = setInterval(updatePrice, 60000);
-      return () => { clearInterval(intervalTimer) }
-    },
-    [updatePrice]
-  )
-
-  useEffect(
-    () => {
-      if (isConnectedToProperNetwork && currentAccount) {
-        updateDepositInfo();
-        updateDebtInfo();
-        updateAvailableToMintInfo();
-        updatePrice();
-      }
-    },
-    [
-      updateDepositInfo, 
-      updateDebtInfo, 
-      updatePrice, 
-      updateAvailableToMintInfo, 
-      isConnectedToProperNetwork, 
-      currentAccount
-    ]
-  )
-
-  const deposit = async (event: MouseEvent<HTMLButtonElement>) => {
+  const onDepositClick = async () => {
     const val = depositInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(
-          vault.depositNative(synth, currentAccount, { value: ethers.utils.parseEther(val) })
-        );
-        await ts?.wait(1);
-        updateDepositInfo();
-        updateAvailableToMintInfo();
+        await deposit(val)
+        balanceOfCollateral.mutate();
+        availableToMint.mutate();
         (depositInput.current as HTMLInputElement).value = "";
       }
       handleLoading(promise())
     }
   }
-  const withdraw = async (event: MouseEvent<HTMLButtonElement>) => {
+  const onWithdrawClick = async () => {
     const val = withdrawInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(
-          vault.withdrawNative(synth, currentAccount, ethers.utils.parseEther(val))
-        );
-        await ts?.wait(1);
-        updateDepositInfo();
-        updateAvailableToMintInfo();
+        await withdraw(val)
+        balanceOfCollateral.mutate();
+        availableToMint.mutate();
         (withdrawInput.current as HTMLInputElement).value = "";
       }
       handleLoading(promise())
     }
   }
-  const mint = async (event: MouseEvent<HTMLButtonElement>) => {
+  const onMintClick = async () => {
     const val = mintInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(
-          vault.mint(synth, collateralToken, currentAccount, ethers.utils.parseUnits(val))
-        );
-        await ts?.wait(1);
-        updateDebtInfo();
-        updateAvailableToMintInfo();
+        await mint(val)
+        balanceOfDebt.mutate();
+        availableToMint.mutate();
         (mintInput.current as HTMLInputElement).value = "";
       }
       handleLoading(promise())
     }
   }
-  const burn = async (event: MouseEvent<HTMLButtonElement>) => {
+  const onBurnClick = async () => {
     const val = burnInput?.current?.value;
     if (val) {
       const promise = async () => {
-        const ts = await safeContractCall(
-          vault.burn(synth, collateralToken, ethers.utils.parseUnits(val))
-        );
-        await ts?.wait(1);
-        updateDebtInfo();
-        updateAvailableToMintInfo();
+        await burn(val)
+        balanceOfDebt.mutate();
+        availableToMint.mutate();
         (burnInput.current as HTMLInputElement).value = "";
       }
       handleLoading(promise())
@@ -174,15 +98,15 @@ const VaultDesk: FC<VaultDeskProps> = () => {
       <div className={styles.row}>
         <div className={styles.group}>
           <p className={styles.vaultInfoTitle}>PIGMY locked in vault:</p>
-          <p className={styles.vaultInfoValue}>{collateral}</p>
+          <p className={styles.vaultInfoValue}>{balanceOfCollateral.data}</p>
         </div>
         <div className={styles.group}>
           <p className={styles.vaultInfoTitle}>Issued USDgm debt:</p>
-          <p className={styles.vaultInfoValue}>{debt}</p>
+          <p className={styles.vaultInfoValue}>{balanceOfDebt.data}</p>
         </div>
         <div className={styles.group}>
           <p className={styles.vaultInfoTitle}>Available to mint</p>
-          <p className={styles.vaultInfoValue}>{availableToMint}</p>
+          <p className={styles.vaultInfoValue}>{availableToMint.data}</p>
         </div>
       </div>
       <div className={styles.row}>
@@ -196,7 +120,7 @@ const VaultDesk: FC<VaultDeskProps> = () => {
           />
           <Button
             className={styles.btn}
-            onClick={deposit}
+            onClick={onDepositClick}
             disabled={isFormDisabled}
           >
             Deposit
@@ -212,7 +136,7 @@ const VaultDesk: FC<VaultDeskProps> = () => {
           />
           <Button
             className={styles.btn}
-            onClick={withdraw}
+            onClick={onWithdrawClick}
             disabled={isFormDisabled}
           >
             Withdraw
@@ -229,7 +153,7 @@ const VaultDesk: FC<VaultDeskProps> = () => {
             disabled={isFormDisabled} />
           <Button
             className={styles.btn}
-            onClick={mint}
+            onClick={onMintClick}
             disabled={isFormDisabled}
           >
             Mint
@@ -244,7 +168,7 @@ const VaultDesk: FC<VaultDeskProps> = () => {
             disabled={isFormDisabled} />
           <Button
             className={styles.btn}
-            onClick={burn}
+            onClick={onBurnClick}
             disabled={isFormDisabled}
           >
             Burn

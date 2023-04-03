@@ -28,10 +28,10 @@ const WelcomeButton: FC<WelcomeButtonProps> = ({ currentAccount, startOnboarding
       return <ConnectToMetaMaskButton className={btnClassName} openApp={openApp} />
     } else {
       return <OpenAppButton className={btnClassName} openApp={openApp} />
-    } 
+    }
   } else {
     return <InstallMetaMaskButton className={btnClassName} startOnboarding={startOnboarding} />
-  } 
+  }
 }
 
 export default WelcomeButton;

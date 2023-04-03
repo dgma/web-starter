@@ -1,19 +1,31 @@
 import { useEffect, useState, useCallback, createContext } from "react";
-import type { FC, PropsWithChildren } from "react";
+import type { Dispatch, FC, PropsWithChildren } from "react";
 import dynamic from 'next/dynamic'
 import { ethers } from 'ethers'
 import { toast } from 'react-toastify';
 import { useNetwork } from './useNetwork'
 import { useWallet } from './useWallet';
+import type { UseWalletResult } from './useWallet';
 import { wait, reload } from '@/libs/utils';
-import { synth, collateralToken, chainId } from '@/libs/constants';
+import { chainId } from '@/libs/constants';
 
-import useVault from "@/libs/hooks/useVault";
+type AppContext = UseWalletResult & {
+  isTransactionPending: boolean;
+  setTransactionPending: Dispatch<boolean>;
+  provider?: ethers.providers.Web3Provider;
+  isConnectedToProperNetwork: boolean;
+  setIsConnectedToProperNetwork: Dispatch<boolean>;
+  showLoader: boolean;
+}
 
-
-export const AppContext = createContext<any>({
+export const AppContext = createContext<AppContext>({
   isTransactionPending: false,
   setTransactionPending: () => {},
+  isConnectedToProperNetwork: false,
+  setIsConnectedToProperNetwork: () => {},
+  connectToMetaMask: () => Promise.resolve(null),
+  walletApp: () => undefined,
+  showLoader: false,
 })
 
 const verifyChain = async (provider: ethers.providers.Web3Provider) => {
@@ -28,29 +40,14 @@ const verifyChain = async (provider: ethers.providers.Web3Provider) => {
   }
 };
 
-const checkIsVaultOpened = async (currentAccount: string, isConnectedToProperNetwork: boolean, contract: ethers.Contract) => {
-  if (currentAccount && isConnectedToProperNetwork) {
-    try {
-      const resetTimer = setTimeout(reload, 4000);
-      const isVaultOpened =  await contract.isAccountOpened(synth, collateralToken, currentAccount);
-      clearTimeout(resetTimer);
-      return isVaultOpened;
-    } catch (error) {
-      throw new Error((error as any)?.reason || 'Something went wrong');
-    }
-  }
-};
-
 const AppProvider: FC<PropsWithChildren> = ({ children }) => {
-
   const [isTransactionPending, setTransactionPending] = useState(false);
-  const [vaultOpened, setVaultOpened] = useState<boolean>();
-  const [showLoader, setShowLoader] = useState(true); 
+  const [showLoader, setShowLoader] = useState(true)
 
   const {
-    provider,  
-    isConnectedToProperNetwork, 
-    setIsConnectedToProperNetwork 
+    provider,
+    isConnectedToProperNetwork,
+    setIsConnectedToProperNetwork
   } = useNetwork();
 
   const {
@@ -59,8 +56,6 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
     walletApp,
   } = useWallet(provider);
 
-  const contract = useVault(provider);
-
   const verification = useCallback(
     async () => {
       try {
@@ -68,24 +63,21 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
           console.log('start verification');
           const isConnectedToProperNetwork = await verifyChain(provider);
           console.log('isConnectedToProperNetwork', isConnectedToProperNetwork);
-          const isVaultOpened = await checkIsVaultOpened(currentAccount, isConnectedToProperNetwork, contract);
-          console.log('isVaultOpened', isVaultOpened);
           setIsConnectedToProperNetwork(isConnectedToProperNetwork);
-          setVaultOpened(!!isVaultOpened);
         }
       } catch (error) {
         toast.error((error as Error)?.message);
         console.log(error);
       }
-    }, 
-    [setIsConnectedToProperNetwork, provider, currentAccount, contract]
+    },
+    [setIsConnectedToProperNetwork, provider, currentAccount]
   )
 
   useEffect(
     () => {
       walletApp()?.on('chainChanged', reload);
-      return () => { 
-        walletApp()?.removeListener('chainChanged', reload); 
+      return () => {
+        walletApp()?.removeListener('chainChanged', reload);
       }
     },
     [walletApp]
@@ -101,19 +93,17 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   return (
-    <AppContext.Provider 
-      value={{ 
-        isTransactionPending, 
+    <AppContext.Provider
+      value={{
+        isTransactionPending,
         setTransactionPending,
-        provider,  
-        isConnectedToProperNetwork, 
+        provider,
+        isConnectedToProperNetwork,
         setIsConnectedToProperNetwork,
         connectToMetaMask,
         currentAccount,
         walletApp,
         showLoader,
-        vaultOpened,
-        setVaultOpened,
       }}
     >
       {children}
@@ -122,3 +112,4 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
 };
 
 export default dynamic(() => Promise.resolve(AppProvider), { ssr: false });
+

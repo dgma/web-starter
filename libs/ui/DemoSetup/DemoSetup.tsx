@@ -13,9 +13,9 @@ const DemoSetup: FC<DemoSetupProps> = () => {
   const { provider, isConnectedToProperNetwork } = useApp();
 
   useEffect(
-    () => { 
+    () => {
       toast.info('This is a demo app, don\'t hesitate to refresh the page is something goes wrong' );
-    }, 
+    },
     []
   );
 
