@@ -14,7 +14,6 @@ import VaultDesk from './components/VaultDesk';
 import styles from './DemoVault.module.css';
 
 const DemoVault: FC = () => {
-  const { isVaultOpened } = useIsVaultOpened()
 
   const {
     isConnectedToProperNetwork,
@@ -22,6 +21,7 @@ const DemoVault: FC = () => {
     currentAccount,
   } = useApp();
 
+  const { isVaultOpened } = useIsVaultOpened();
   const { openVault } = useOpenVault()
   const { getPigmy } = useGetPigmy()
   const { addUSDgmToWallet } = useAddUSDgmToWallet()

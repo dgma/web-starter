@@ -4,7 +4,7 @@ import detectEthereumProvider from '@metamask/detect-provider';
 
 export const useNetwork = () => {
   const [provider, setProvider] = useState<ethers.providers.Web3Provider | undefined>();
-  const [isConnectedToProperNetwork, setIsConnectedToProperNetwork] = useState(true);
+  const [isConnectedToProperNetwork, setIsConnectedToProperNetwork] = useState(false);
 
   useEffect(
     () => {

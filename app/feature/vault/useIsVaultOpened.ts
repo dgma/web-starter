@@ -5,10 +5,16 @@ import { useApp } from '@/libs/context/app'
 import useVault from '@/libs/hooks/useVault'
 
 const useIsVaultOpened = () => {
-  const { currentAccount, provider } = useApp()
+  const { currentAccount, provider, isConnectedToProperNetwork } = useApp()
   const contract = useVault(provider);
 
-  const fetcher = () => contract.isAccountOpened(synth, collateralToken, currentAccount)
+  const fetcher = () => {
+    if (isConnectedToProperNetwork) {
+      console.log('check', isConnectedToProperNetwork)
+      return contract.isAccountOpened(synth, collateralToken, currentAccount)
+    }
+    return false;
+  }
 
   const { data: isVaultOpened, mutate } = useSWR(() => currentAccount ? 'vault.isOpened' : null, fetcher)
 
