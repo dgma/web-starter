@@ -1,9 +1,9 @@
-const { withSentryConfig } = require('@sentry/nextjs');
+const { withSentryConfig } = require("@sentry/nextjs");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  output: "standalone",
   sentry: {
     hideSourceMaps: true,
     disableServerWebpackPlugin: !process.env.SENTRY_DSN,
@@ -13,10 +13,8 @@ const nextConfig = {
     networkName: process.env.NETWORK_NAME,
     chainId: process.env.CHAIN_ID_HEX,
     rpc: process.env.RPC,
-  }
-}
+    suspend: process.env.SUSPEND_WEBSITE,
+  },
+};
 
-module.exports = withSentryConfig(
-  nextConfig,
-  { silent: true },
-);
+module.exports = withSentryConfig(nextConfig, { silent: true });

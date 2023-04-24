@@ -11,6 +11,8 @@ const WelcomeButton = dynamic(() => import("./WelcomeButton"), {
   ssr: false,
 });
 
+const suspend = process.env.suspend === "true";
+
 const Welcome: FC = () => {
   const [isWelcomeButtonShowed, setIsWelcomeButtonShowed] = useState(false);
   const { currentAccount } = useApp();
@@ -53,10 +55,9 @@ const Welcome: FC = () => {
       <WelcomeButton
         currentAccount={currentAccount}
         startOnboarding={startOnboarding}
-        // show={isWelcomeButtonShowed}
-        show={false}
+        show={isWelcomeButtonShowed && !suspend}
       />
-      <div>We are migrating to the new network. ETA: 26.04 </div>
+      {suspend && <div>We are migrating to the new network. ETA: 26.04 </div>}
     </div>
   );
 };
