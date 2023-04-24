@@ -1,6 +1,6 @@
-import Head from 'next/head'
-import styles from '@/styles/main.module.css'
-import { Welcome } from '@/libs/ui/Welcome';
+import Head from "next/head";
+import styles from "@/styles/main.module.css";
+import { Welcome } from "@/libs/ui/Welcome";
 
 export default function HomePage() {
   return (
@@ -12,8 +12,8 @@ export default function HomePage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <Welcome/>
+        <Welcome />
       </main>
     </>
-  )
+  );
 }

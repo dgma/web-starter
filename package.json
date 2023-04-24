@@ -6,10 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "prepare": "husky install",
+    "prettier": "prettier --write pages/**/*.ts libs/**/*.ts app/**/*.ts"
   },
   "dependencies": {
-    "@dgma/protocol": "0.1.9",
+    "@dgma/protocol": "0.1.11-rainbow",
     "@metamask/detect-provider": "2.0.0",
     "@metamask/onboarding": "1.0.1",
     "@next/font": "13.1.6",
@@ -28,5 +31,11 @@
     "swr": "^2.1.1",
     "typescript": "4.9.4",
     "typewriter-effect": "^2.19.0"
+  },
+  "devDependencies": {
+    "eslint-config-prettier": "^8.8.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1",
+    "prettier": "^2.8.8"
   }
 }

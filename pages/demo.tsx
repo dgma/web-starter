@@ -1,10 +1,9 @@
-import Head from 'next/head';
-import styles from '@/styles/main.module.css'
-import { Demo } from '@/libs/ui/Demo';
-import { ToastContainer } from 'react-toastify';
+import Head from "next/head";
+import styles from "@/styles/main.module.css";
+import { Demo } from "@/libs/ui/Demo";
+import { ToastContainer } from "react-toastify";
 
 export default function DemoPage() {
-  
   return (
     <>
       <Head>
@@ -15,8 +14,8 @@ export default function DemoPage() {
       </Head>
       <main className={styles.main}>
         <Demo />
-        <ToastContainer theme="colored"/>
+        <ToastContainer theme="colored" />
       </main>
     </>
-  )
+  );
 }

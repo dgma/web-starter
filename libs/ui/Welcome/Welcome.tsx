@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import type { FC } from 'react';
-import dynamic from 'next/dynamic'
-import Typewriter from 'typewriter-effect';
-import MetaMaskOnboarding from '@metamask/onboarding';
-import { useApp } from '@/libs/context/app';
+import { useEffect, useRef, useState } from "react";
+import type { FC } from "react";
+import dynamic from "next/dynamic";
+import Typewriter from "typewriter-effect";
+import MetaMaskOnboarding from "@metamask/onboarding";
+import { useApp } from "@/libs/context/app";
 
-import styles from './Welcome.module.css';
+import styles from "./Welcome.module.css";
 
-const WelcomeButton = dynamic(() => import('./WelcomeButton'), {
+const WelcomeButton = dynamic(() => import("./WelcomeButton"), {
   ssr: false,
-})
+});
 
 const Welcome: FC = () => {
   const [isWelcomeButtonShowed, setIsWelcomeButtonShowed] = useState(false);
@@ -38,24 +38,25 @@ const Welcome: FC = () => {
       <h1 className={styles.title}>
         <Typewriter
           onInit={(typewriter) => {
-            typewriter.typeString('Welcome to Dogma')
+            typewriter
+              .typeString("Welcome to Dogma")
               .callFunction(() => {
                 setIsWelcomeButtonShowed(true);
               })
               .start();
           }}
           options={{
-            delay: 85
+            delay: 85,
           }}
         />
       </h1>
-      <WelcomeButton 
-        currentAccount={currentAccount} 
-        startOnboarding={startOnboarding} 
+      <WelcomeButton
+        currentAccount={currentAccount}
+        startOnboarding={startOnboarding}
         show={isWelcomeButtonShowed}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Welcome
+export default Welcome;

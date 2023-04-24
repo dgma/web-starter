@@ -1,6 +1,6 @@
-import type { FC } from 'react';
-import Link from 'next/link'
-import styles from './Nav.module.css';
+import type { FC } from "react";
+import Link from "next/link";
+import styles from "./Nav.module.css";
 
 interface LinksConfig {
   href?: string;
@@ -13,19 +13,23 @@ interface NavProps {
 }
 
 const Nav: FC<NavProps> = ({ isShowed, links }) => {
-  const navClassName = isShowed ? `${styles.nav} ${styles.navShowed}` : `${styles.nav} ${styles.navHidden}`;
+  const navClassName = isShowed
+    ? `${styles.nav} ${styles.navShowed}`
+    : `${styles.nav} ${styles.navHidden}`;
 
   return (
     <div className={navClassName}>
-      {links.map(
-        ({ href, name }) => (
-          <Link href={href || ''} className={styles.hoverUnderlineAnimation} key={name}>
-            {name}
-          </Link>
-        )
-      )}
+      {links.map(({ href, name }) => (
+        <Link
+          href={href || ""}
+          className={styles.hoverUnderlineAnimation}
+          key={name}
+        >
+          {name}
+        </Link>
+      ))}
     </div>
-  )
-}
+  );
+};
 
 export default Nav;

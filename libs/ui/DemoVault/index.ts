@@ -1,1 +1,1 @@
-export { default as DemoVault } from './DemoVault';
+export { default as DemoVault } from "./DemoVault";

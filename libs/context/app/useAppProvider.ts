@@ -1,7 +1,7 @@
-import {useContext} from 'react';
+import { useContext } from "react";
 
-import { AppContext } from './AppProvider';
+import { AppContext } from "./AppProvider";
 
-const useApp = () => useContext(AppContext)
+const useApp = () => useContext(AppContext);
 
 export default useApp;

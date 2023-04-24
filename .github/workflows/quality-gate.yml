@@ -7,9 +7,6 @@ on:
 
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -21,8 +18,17 @@ jobs:
       RPC: random.rpc.com:8545
       CHAIN_ID_HEX: 0x888888
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: config npm
+        run: mv .npmrc.deploy .npmrc
+      - name: Install modules
+        run: npm ci
+      - name: code quality
+        run: npm run lint
       - name: Build
         run: docker compose build;

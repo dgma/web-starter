@@ -1,5 +1,5 @@
-import type { FC } from 'react';
-import Button from '@/libs/ui/Button';
+import type { FC } from "react";
+import Button from "@/libs/ui/Button";
 
 interface OpenAppButtonProps {
   className?: string;

@@ -1,1 +1,1 @@
-export { default as useGetPigmy } from './useGetPigmy'
+export { default as useGetPigmy } from "./useGetPigmy";

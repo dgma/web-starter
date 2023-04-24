@@ -1,24 +1,26 @@
-import useSWR from 'swr'
-
-import { synth, collateralToken } from '@/libs/constants'
-import { useApp } from '@/libs/context/app'
-import useVault from '@/libs/hooks/useVault'
+import useSWR from "swr";
+import { useEffect } from "react";
+import { synth, collateralToken } from "@/libs/constants";
+import { useApp } from "@/libs/context/app";
+import useVault from "@/libs/hooks/useVault";
 
 const useIsVaultOpened = () => {
-  const { currentAccount, provider, isConnectedToProperNetwork } = useApp()
+  const { currentAccount, provider, isConnectedToProperNetwork } = useApp();
   const contract = useVault(provider);
 
   const fetcher = () => {
-    if (isConnectedToProperNetwork) {
-      console.log('check', isConnectedToProperNetwork)
-      return contract.isAccountOpened(synth, collateralToken, currentAccount)
-    }
-    return false;
-  }
+    console.log("check isAccountOpened");
+    return contract.isAccountOpened(synth, collateralToken, currentAccount);
+  };
 
-  const { data: isVaultOpened, mutate } = useSWR(() => currentAccount ? 'vault.isOpened' : null, fetcher)
+  const shouldFetch = isConnectedToProperNetwork && currentAccount;
 
-  return { isVaultOpened, mutate }
-}
+  const { data: isVaultOpened, mutate } = useSWR(
+    () => (shouldFetch ? "vault.isOpened" : null),
+    fetcher
+  );
 
-export default useIsVaultOpened
+  return { isVaultOpened, mutate };
+};
+
+export default useIsVaultOpened;

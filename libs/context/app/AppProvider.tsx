@@ -1,13 +1,13 @@
 import { useEffect, useState, useCallback, createContext } from "react";
 import type { Dispatch, FC, PropsWithChildren } from "react";
-import dynamic from 'next/dynamic'
-import { ethers } from 'ethers'
-import { toast } from 'react-toastify';
-import { useNetwork } from './useNetwork'
-import { useWallet } from './useWallet';
-import type { UseWalletResult } from './useWallet';
-import { wait, reload } from '@/libs/utils';
-import { chainId } from '@/libs/constants';
+import dynamic from "next/dynamic";
+import { ethers } from "ethers";
+import { toast } from "react-toastify";
+import { useNetwork } from "./useNetwork";
+import { useWallet } from "./useWallet";
+import type { UseWalletResult } from "./useWallet";
+import { wait, reload } from "@/libs/utils";
+import { chainId } from "@/libs/constants";
 
 type AppContext = UseWalletResult & {
   isTransactionPending: boolean;
@@ -16,7 +16,7 @@ type AppContext = UseWalletResult & {
   isConnectedToProperNetwork: boolean;
   setIsConnectedToProperNetwork: Dispatch<boolean>;
   showLoader: boolean;
-}
+};
 
 export const AppContext = createContext<AppContext>({
   isTransactionPending: false,
@@ -26,14 +26,16 @@ export const AppContext = createContext<AppContext>({
   connectToMetaMask: () => Promise.resolve(null),
   walletApp: () => undefined,
   showLoader: false,
-})
+});
 
 const verifyChain = async (provider: ethers.providers.Web3Provider) => {
   try {
     const resetTimer = setTimeout(reload, 5000);
-    const [chainID] = await Promise.all(
-      [provider.send('eth_chainId', []), wait(1000)]);
-    clearTimeout(resetTimer)
+    const [chainID] = await Promise.all([
+      provider.send("eth_chainId", []),
+      wait(1000),
+    ]);
+    clearTimeout(resetTimer);
     return chainId === chainID;
   } catch (error) {
     throw new Error("Cannot check network, please refresh page");
@@ -42,55 +44,43 @@ const verifyChain = async (provider: ethers.providers.Web3Provider) => {
 
 const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isTransactionPending, setTransactionPending] = useState(false);
-  const [showLoader, setShowLoader] = useState(true)
+  const [showLoader, setShowLoader] = useState(true);
 
   const {
     provider,
     isConnectedToProperNetwork,
-    setIsConnectedToProperNetwork
+    setIsConnectedToProperNetwork,
   } = useNetwork();
 
-  const {
-    connectToMetaMask,
-    currentAccount,
-    walletApp,
-  } = useWallet(provider);
+  const { connectToMetaMask, currentAccount, walletApp } = useWallet(provider);
 
-  const verification = useCallback(
-    async () => {
-      try {
-        if (currentAccount && provider) {
-          console.log('start verification');
-          const isConnectedToProperNetwork = await verifyChain(provider);
-          console.log('isConnectedToProperNetwork', isConnectedToProperNetwork);
-          setIsConnectedToProperNetwork(isConnectedToProperNetwork);
-        }
-      } catch (error) {
-        toast.error((error as Error)?.message);
-        console.log(error);
+  const verification = useCallback(async () => {
+    try {
+      if (currentAccount && provider) {
+        console.log("start verification");
+        const isConnectedToProperNetwork = await verifyChain(provider);
+        console.log("isConnectedToProperNetwork", isConnectedToProperNetwork);
+        setIsConnectedToProperNetwork(isConnectedToProperNetwork);
       }
-    },
-    [setIsConnectedToProperNetwork, provider, currentAccount]
-  )
+    } catch (error) {
+      toast.error((error as Error)?.message);
+      console.log(error);
+    }
+  }, [setIsConnectedToProperNetwork, provider, currentAccount]);
 
-  useEffect(
-    () => {
-      walletApp()?.on('chainChanged', reload);
-      return () => {
-        walletApp()?.removeListener('chainChanged', reload);
-      }
-    },
-    [walletApp]
-  );
+  useEffect(() => {
+    walletApp()?.on("chainChanged", reload);
+    return () => {
+      walletApp()?.removeListener("chainChanged", reload);
+    };
+  }, [walletApp]);
 
-  useEffect(
-    () => {
-      setShowLoader(true)
-      verification()
-        .finally(() => {setShowLoader(false)});
-    },
-    [verification]
-  );
+  useEffect(() => {
+    setShowLoader(true);
+    verification().finally(() => {
+      setShowLoader(false);
+    });
+  }, [verification]);
 
   return (
     <AppContext.Provider
@@ -112,4 +102,3 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
 };
 
 export default dynamic(() => Promise.resolve(AppProvider), { ssr: false });
-
