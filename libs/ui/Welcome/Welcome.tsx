@@ -53,8 +53,10 @@ const Welcome: FC = () => {
       <WelcomeButton
         currentAccount={currentAccount}
         startOnboarding={startOnboarding}
-        show={isWelcomeButtonShowed}
+        // show={isWelcomeButtonShowed}
+        show={false}
       />
+      <div>We are migrating to the new network. ETA: 26.04 </div>
     </div>
   );
 };
