@@ -22,6 +22,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
       - NETWORK_NAME=rabbit.dev
+      - SUSPEND_WEBSITE=${SUSPEND_WEBSITE}
     ports:
       - "8081:8081"
     expose:

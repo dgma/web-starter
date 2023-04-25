@@ -22,6 +22,7 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
       - NETWORK_NAME=rabbit.stg
+      - SUSPEND_WEBSITE=${SUSPEND_WEBSITE}
     ports:
       - "8080:8080"
     expose:
