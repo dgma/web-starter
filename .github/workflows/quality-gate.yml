@@ -17,6 +17,7 @@ jobs:
       NPM_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
       RPC: random.rpc.com:8545
       CHAIN_ID_HEX: 0x888888
+      DEPLOYMENT_NETWORK_NAME: 'sepolia.dev'
     runs-on: ubuntu-latest
     permissions:
       contents: read

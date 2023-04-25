@@ -5,6 +5,7 @@ import Typewriter from "typewriter-effect";
 import { useIsVaultOpened, useOpenVault } from "@/app/feature/vault";
 import { useGetPigmy } from "@/app/feature/demo";
 import { useAddUSDgmToWallet } from "@/app/feature/wallet";
+import { nativeCurrency } from "@/libs/constants";
 
 import Button from "@/libs/ui/Button";
 import { useApp } from "@/libs/context/app";
@@ -57,8 +58,7 @@ const DemoVault: FC = () => {
           />
         </div>
         <Button onClick={handleOpenVault} disabled={isFormDisabled}>
-          {" "}
-          Open Vault{" "}
+          Open Vault
         </Button>
       </div>
     );
@@ -70,8 +70,7 @@ const DemoVault: FC = () => {
       {renderVault()}
       <div className={styles.group}>
         <Button onClick={handleGetPigmy} disabled={isFormDisabled}>
-          {" "}
-          Get PIGMY{" "}
+          {`Get ${nativeCurrency.symbol}`}
         </Button>
         <Button onClick={addUSDgmToken} disabled={isFormDisabled}>
           Add USDgm to metamask

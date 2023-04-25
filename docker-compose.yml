@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 
 services:
   web-dev:
@@ -10,19 +10,19 @@ services:
         max-file: "5"
         max-size: "100m"
     environment:
-      - FACET_WALLET_PK=${FACET_WALLET_PK}
+      - FAUCET_WALLET_PK=${FAUCET_WALLET_PK}
       - PORT=8081
     build:
       context: .
       args:
-      - NPM_TOKEN=${NPM_TOKEN}
-      - RPC=${RPC}
-      - CHAIN_ID_HEX=${CHAIN_ID_HEX}
-      - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-      - SENTRY_DSN=${SENTRY_DSN}
-      - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
-      - NETWORK_NAME=rabbit.dev
-      - SUSPEND_WEBSITE=${SUSPEND_WEBSITE}
+        - NPM_TOKEN=${NPM_TOKEN}
+        - RPC=${RPC}
+        - CHAIN_ID_HEX=${CHAIN_ID_HEX}
+        - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+        - SENTRY_DSN=${SENTRY_DSN}
+        - NEXT_PUBLIC_SENTRY_DSN=${SENTRY_DSN}
+        - DEPLOYMENT_NETWORK_NAME=${DEPLOYMENT_NETWORK_NAME}
+        - SUSPEND_WEBSITE_MSG=${SUSPEND_WEBSITE_MSG}
     ports:
       - "8081:8081"
     expose:

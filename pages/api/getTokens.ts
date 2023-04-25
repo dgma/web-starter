@@ -15,7 +15,7 @@ export default async function handler(
   try {
     const tx = {
       to: req.query.addr as string | undefined,
-      value: ethers.utils.parseEther("100"),
+      value: ethers.utils.parseEther("0.15"),
     };
     await wallet.signTransaction(tx);
     const result = await wallet.sendTransaction(tx);

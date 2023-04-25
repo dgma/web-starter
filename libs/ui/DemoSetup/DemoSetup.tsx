@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { useApp } from "@/libs/context/app";
 import Button from "@/libs/ui/Button";
-import { networkName, chainId, rpc } from "@/libs/constants";
+import { chainName, chainId, rpc, nativeCurrency } from "@/libs/constants";
 import styles from "./DemoSetup.module.css";
 
 interface DemoSetupProps {}
@@ -21,13 +21,9 @@ const DemoSetup: FC<DemoSetupProps> = () => {
     try {
       await provider?.send("wallet_addEthereumChain", [
         {
-          chainId: chainId,
-          chainName: networkName,
-          nativeCurrency: {
-            name: "PYGMY",
-            symbol: "PYGMY",
-            decimals: 18,
-          },
+          chainId,
+          chainName,
+          nativeCurrency,
           rpcUrls: [rpc],
         },
       ]);
@@ -41,9 +37,9 @@ const DemoSetup: FC<DemoSetupProps> = () => {
   if (!isConnectedToProperNetwork) {
     return (
       <div className={styles.root}>
-        <p>Insure that you metamask wallet connected to the Rabbit network</p>
+        <p>{`Insure that you metamask wallet connected to the ${chainName} network`}</p>
         <Button onClick={addNetwork} className={styles.addNetwork}>
-          Add Rabbit Network
+          {`Switch to the ${chainName} network`}
         </Button>
       </div>
     );

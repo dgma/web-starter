@@ -10,10 +10,10 @@ const nextConfig = {
     disableClientWebpackPlugin: !process.env.NEXT_PUBLIC_SENTRY_DSN,
   },
   env: {
-    networkName: process.env.NETWORK_NAME,
+    deploymentNetwork: process.env.DEPLOYMENT_NETWORK_NAME,
     chainId: process.env.CHAIN_ID_HEX,
     rpc: process.env.RPC,
-    suspend: process.env.SUSPEND_WEBSITE,
+    suspendMsg: process.env.SUSPEND_WEBSITE_MSG,
   },
 };
 
