@@ -19,12 +19,10 @@ const Demo: FC<DemoProps> = () => {
   const showLoader = isLoading || isNetworkVerificationInProgress;
 
   useEffect(() => {
-    if (!showLoader) {
-      toast.info(
-        "This is a demo app, don't hesitate to refresh the page is something goes wrong"
-      );
-    }
-  }, [showLoader]);
+    toast.info(
+      "This is a demo app, don't hesitate to refresh the page is something goes wrong"
+    );
+  }, []);
 
   if (showLoader) {
     return (
