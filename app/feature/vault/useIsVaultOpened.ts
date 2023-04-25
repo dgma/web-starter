@@ -15,12 +15,13 @@ const useIsVaultOpened = () => {
 
   const shouldFetch = isConnectedToProperNetwork && currentAccount;
 
-  const { data: isVaultOpened, mutate } = useSWR(
-    () => (shouldFetch ? "vault.isOpened" : null),
-    fetcher
-  );
+  const {
+    data: isVaultOpened,
+    mutate,
+    isLoading,
+  } = useSWR(() => (shouldFetch ? "vault.isOpened" : null), fetcher);
 
-  return { isVaultOpened, mutate };
+  return { isVaultOpened, mutate, isLoading };
 };
 
 export default useIsVaultOpened;

@@ -15,7 +15,7 @@ type AppContext = UseWalletResult & {
   provider?: ethers.providers.Web3Provider;
   isConnectedToProperNetwork: boolean;
   setIsConnectedToProperNetwork: Dispatch<boolean>;
-  showLoader: boolean;
+  isNetworkVerificationInProgress: boolean;
 };
 
 export const AppContext = createContext<AppContext>({
@@ -25,7 +25,7 @@ export const AppContext = createContext<AppContext>({
   setIsConnectedToProperNetwork: () => {},
   connectToMetaMask: () => Promise.resolve(null),
   walletApp: () => undefined,
-  showLoader: false,
+  isNetworkVerificationInProgress: true,
 });
 
 const verifyChain = async (provider: ethers.providers.Web3Provider) => {
@@ -44,7 +44,8 @@ const verifyChain = async (provider: ethers.providers.Web3Provider) => {
 
 const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   const [isTransactionPending, setTransactionPending] = useState(false);
-  const [showLoader, setShowLoader] = useState(true);
+  const [isNetworkVerificationInProgress, setNetworkVerificationInProgress] =
+    useState(true);
 
   const {
     provider,
@@ -54,19 +55,23 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const { connectToMetaMask, currentAccount, walletApp } = useWallet(provider);
 
-  const verification = useCallback(async () => {
-    try {
-      if (currentAccount && provider) {
+  const verification = useCallback(
+    async (provider: ethers.providers.Web3Provider) => {
+      try {
         console.log("start verification");
         const isConnectedToProperNetwork = await verifyChain(provider);
         console.log("isConnectedToProperNetwork", isConnectedToProperNetwork);
         setIsConnectedToProperNetwork(isConnectedToProperNetwork);
+        setNetworkVerificationInProgress(false);
+      } catch (error) {
+        // hide loader before error notification appears
+        setNetworkVerificationInProgress(false);
+        toast.error((error as Error)?.message);
+        console.log(error);
       }
-    } catch (error) {
-      toast.error((error as Error)?.message);
-      console.log(error);
-    }
-  }, [setIsConnectedToProperNetwork, provider, currentAccount]);
+    },
+    [setIsConnectedToProperNetwork]
+  );
 
   useEffect(() => {
     walletApp()?.on("chainChanged", reload);
@@ -76,11 +81,11 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [walletApp]);
 
   useEffect(() => {
-    setShowLoader(true);
-    verification().finally(() => {
-      setShowLoader(false);
-    });
-  }, [verification]);
+    setNetworkVerificationInProgress(true);
+    if (provider) {
+      verification(provider);
+    }
+  }, [verification, provider]);
 
   return (
     <AppContext.Provider
@@ -93,7 +98,7 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
         connectToMetaMask,
         currentAccount,
         walletApp,
-        showLoader,
+        isNetworkVerificationInProgress,
       }}
     >
       {children}

@@ -7,7 +7,7 @@ export const useNetwork = () => {
     ethers.providers.Web3Provider | undefined
   >();
   const [isConnectedToProperNetwork, setIsConnectedToProperNetwork] =
-    useState(false);
+    useState<boolean>(false);
 
   useEffect(() => {
     detectEthereumProvider().then((metaMaskProvider) => {
