@@ -31,9 +31,9 @@ const VaultDesk: FC = () => {
   const burnInput = useRef<HTMLInputElement>(null);
 
   const handleLoading = useCallback(
-    async (wait: Promise<any>) => {
+    async (wait: () => Promise<any>) => {
       setTransactionPending(true);
-      await wait;
+      await wait();
       setTransactionPending(false);
     },
     [setTransactionPending]
@@ -57,7 +57,7 @@ const VaultDesk: FC = () => {
         availableToMint.mutate();
         (depositInput.current as HTMLInputElement).value = "";
       };
-      handleLoading(promise());
+      handleLoading(promise);
     }
   };
   const onWithdrawClick = async () => {
@@ -69,7 +69,7 @@ const VaultDesk: FC = () => {
         availableToMint.mutate();
         (withdrawInput.current as HTMLInputElement).value = "";
       };
-      handleLoading(promise());
+      handleLoading(promise);
     }
   };
   const onMintClick = async () => {
@@ -81,7 +81,7 @@ const VaultDesk: FC = () => {
         availableToMint.mutate();
         (mintInput.current as HTMLInputElement).value = "";
       };
-      handleLoading(promise());
+      handleLoading(promise);
     }
   };
   const onBurnClick = async () => {
@@ -93,7 +93,7 @@ const VaultDesk: FC = () => {
         availableToMint.mutate();
         (burnInput.current as HTMLInputElement).value = "";
       };
-      handleLoading(promise());
+      handleLoading(promise);
     }
   };
 

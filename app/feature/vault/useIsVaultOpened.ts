@@ -1,5 +1,4 @@
 import useSWR from "swr";
-import { useEffect } from "react";
 import { synth, collateralToken } from "@/libs/constants";
 import { useApp } from "@/libs/context/app";
 import useVault from "@/libs/hooks/useVault";
