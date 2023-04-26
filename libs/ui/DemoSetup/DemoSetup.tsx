@@ -2,6 +2,7 @@ import type { FC } from "react";
 import { toast } from "react-toastify";
 import { useApp } from "@/libs/context/app";
 import Button from "@/libs/ui/Button";
+import type { MetamaskError } from "@/app/error-handling";
 import { chainName, chainId, rpc, nativeCurrency } from "@/libs/constants";
 import styles from "./DemoSetup.module.css";
 
@@ -12,17 +13,29 @@ const DemoSetup: FC<DemoSetupProps> = () => {
 
   const addNetwork = async () => {
     try {
-      await provider?.send("wallet_addEthereumChain", [
-        {
-          chainId,
-          chainName,
-          nativeCurrency,
-          rpcUrls: [rpc],
-        },
-      ]);
-    } catch (error) {
+      await provider?.send("wallet_switchEthereumChain", [{ chainId }]);
+    } catch (switchError) {
+      if ((switchError as MetamaskError).code === 4001) {
+        return;
+      }
+      if ((switchError as MetamaskError).code === 4902) {
+        try {
+          await provider?.send("wallet_addEthereumChain", [
+            {
+              chainId,
+              chainName,
+              nativeCurrency,
+              rpcUrls: [rpc],
+            },
+          ]);
+        } catch (addError) {
+          toast.error(
+            "Adding network was unsuccessful, please refresh page and try again"
+          );
+        }
+      }
       toast.error(
-        "Adding network was unsuccessful, please refresh page and try again"
+        "Switching network was unsuccessful, please refresh page and try again"
       );
     }
   };
