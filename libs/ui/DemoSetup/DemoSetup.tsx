@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useApp } from "@/libs/context/app";
 import Button from "@/libs/ui/Button";
 import type { MetamaskError } from "@/app/error-handling";
-import { chainName, chainId, rpc, nativeCurrency } from "@/libs/constants";
+import { chainShortName, chainId, metamaskChainConfig } from "@/libs/constants";
 import styles from "./DemoSetup.module.css";
 
 interface DemoSetupProps {}
@@ -21,12 +21,7 @@ const DemoSetup: FC<DemoSetupProps> = () => {
       if ((switchError as MetamaskError).code === 4902) {
         try {
           await provider?.send("wallet_addEthereumChain", [
-            {
-              chainId,
-              chainName,
-              nativeCurrency,
-              rpcUrls: [rpc],
-            },
+            metamaskChainConfig,
           ]);
         } catch (addError) {
           toast.error(
@@ -43,9 +38,9 @@ const DemoSetup: FC<DemoSetupProps> = () => {
   if (!isConnectedToProperNetwork) {
     return (
       <div className={styles.root}>
-        <p>{`Insure that you metamask wallet connected to the ${chainName} network`}</p>
+        <p>{`Insure that you metamask wallet connected to the ${chainShortName} network`}</p>
         <Button onClick={addNetwork} className={styles.addNetwork}>
-          {`Switch to the ${chainName} network`}
+          {`Switch to the ${chainShortName} network`}
         </Button>
       </div>
     );

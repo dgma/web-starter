@@ -8,30 +8,41 @@ type deploymentNetwork = "sepolia.dev" | "goerli.stg";
 export const deploymentNetwork = process.env
   .deploymentNetwork as deploymentNetwork;
 
-const currenciesForChain = {
+export const chainId = process.env.chainId;
+
+const chainConfigs = {
   sepolia: {
-    name: "SepoliaETH",
-    symbol: "ETH",
-    decimals: 18,
+    nativeCurrency: {
+      name: "SepoliaETH",
+      symbol: "ETH",
+      decimals: 18,
+    },
+    chainId,
+    rpc: [`https://api.infura.io/v1/jsonrpc/sepolia`],
+    blockExplorerUrls: ["https://sepolia.etherscan.io/"],
   },
   goerli: {
-    name: "GoerliETH",
-    symbol: "GETH",
-    decimals: 18,
+    nativeCurrency: {
+      name: "GoerliETH",
+      symbol: "ETH",
+      decimals: 18,
+    },
+    chainId,
+    rpc: [`https://api.infura.io/v1/jsonrpc/goerli`],
+    blockExplorerUrls: ["https://goerli.etherscan.io/"],
   },
 };
-export const chainId = process.env.chainId;
-export const chainName = deploymentNetwork.split(".")[0] as
+export const chainShortName = deploymentNetwork.split(".")[0] as
   | "sepolia"
   | "goerli";
-export const nativeCurrency = currenciesForChain[chainName];
-export const rpc = process.env.rpc;
+export const metamaskChainConfig = chainConfigs[chainShortName];
+export const alchemyPrivateRpc = process.env.rpc;
 
 if (typeof window !== "undefined") {
   (window as any).__app_conf = {
     deploymentNetwork,
     chainId,
-    rpc,
+    alchemyPrivateRpc,
     version: pkg.version,
   };
 }

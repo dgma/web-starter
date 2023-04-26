@@ -1,4 +1,5 @@
 import useSWR from "swr";
+import type { MetamaskError } from "@/app/error-handling";
 import { synth, collateralToken } from "@/libs/constants";
 import { useApp } from "@/libs/context/app";
 import useVault from "@/libs/hooks/useVault";
@@ -8,8 +9,12 @@ const useIsVaultOpened = () => {
   const contract = useVault(provider);
 
   const fetcher = () => {
-    console.log("check isAccountOpened");
-    return contract.isAccountOpened(synth, collateralToken, currentAccount);
+    try {
+      console.log("check isAccountOpened");
+      return contract.isAccountOpened(synth, collateralToken, currentAccount);
+    } catch (error) {
+      console.log((error as MetamaskError)?.reason);
+    }
   };
 
   const shouldFetch = isConnectedToProperNetwork && currentAccount;

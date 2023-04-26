@@ -11,17 +11,11 @@ interface ConnecctToMetaMaskButtonProps {
 const InstallMetaMaskButton: FC<ConnecctToMetaMaskButtonProps> = ({
   className,
   startOnboarding,
-}) => {
-  const onClick = () => {
-    startOnboarding();
-  };
-
-  return (
-    <div className={`${className} ${styles.root}`}>
-      <p>You need to install MetaMask before start using Dogma</p>
-      <Button onClick={onClick}>Install MetaMask</Button>
-    </div>
-  );
-};
+}) => (
+  <div className={`${className} ${styles.root}`}>
+    <p>You need to install MetaMask before start using Dogma</p>
+    <Button onClick={startOnboarding}>Install MetaMask</Button>
+  </div>
+);
 
 export default InstallMetaMaskButton;
