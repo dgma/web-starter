@@ -4,6 +4,7 @@ import { useApp } from "@/libs/context/app";
 import Button from "@/libs/ui/Button";
 import type { MetamaskError } from "@/app/error-handling";
 import { chainShortName, chainId, metamaskChainConfig } from "@/libs/constants";
+import { isBrowser } from "react-device-detect";
 import styles from "./DemoSetup.module.css";
 
 interface DemoSetupProps {}
@@ -39,9 +40,11 @@ const DemoSetup: FC<DemoSetupProps> = () => {
     return (
       <div className={styles.root}>
         <p>{`Insure that you metamask wallet connected to the ${chainShortName} network`}</p>
-        <Button onClick={addNetwork} className={styles.addNetwork}>
-          {`Switch to the ${chainShortName} network`}
-        </Button>
+        {isBrowser && (
+          <Button onClick={addNetwork} className={styles.addNetwork}>
+            {`Switch to the ${chainShortName} network`}
+          </Button>
+        )}
       </div>
     );
   }

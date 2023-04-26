@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { FC } from "react";
 import dynamic from "next/dynamic";
 import Typewriter from "typewriter-effect";
+import { isMobile } from "react-device-detect";
 import MetaMaskOnboarding from "@metamask/onboarding";
 import { useApp } from "@/libs/context/app";
 
@@ -53,6 +54,9 @@ const Welcome: FC = () => {
           }}
         />
       </h1>
+      {isMobile && (
+        <p>Mobile version is available only within Metamask App Browser</p>
+      )}
       <WelcomeButton
         currentAccount={currentAccount}
         startOnboarding={startOnboarding}
