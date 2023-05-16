@@ -14,7 +14,6 @@ concurrency:
 jobs:
   build:
     env:
-      NPM_TOKEN: ${{ secrets.PERSONAL_GITHUB_TOKEN }}
       RPC: random.rpc.com:8545
       CHAIN_ID_HEX: 0x888888
       DEPLOYMENT_NETWORK_NAME: 'sepolia.dev'
@@ -25,11 +24,21 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: config npm
-        run: mv .npmrc.deploy .npmrc
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          always-auth: true
+          cache: 'npm'
+          node-version: '16.x'
+          registry-url: https://npm.pkg.github.com
       - name: Install modules
         run: npm ci
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm rebuild && npm run prepare --if-present
       - name: code quality
         run: npm run lint
       - name: Build
         run: docker compose build;
+        env:
+          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
