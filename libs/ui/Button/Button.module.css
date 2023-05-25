@@ -1,20 +1,7 @@
-.root {
-  background-color: transparent;
-  border: 3px solid rgba(var(--foreground-rgb), 0.5);
-  color: rgb(var(--foreground-rgb));
-  cursor: pointer;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  transition: ease-in 50ms;
+.btn {
+  @apply font-bold py-2 px-4 rounded;
 }
 
-.root:hover:enabled {
-  border: 3px solid rgba(var(--foreground-rgb), 0.7);
-}
-
-.root:disabled {
-  cursor: no-drop;
+.primary {
+  @apply bg-primary-500 hover:bg-primary-700 disabled:bg-gray-300 text-white;
 }

@@ -2,6 +2,8 @@ import { SWRConfig } from "swr";
 import type { AppProps } from "next/app";
 
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer } from "react-toastify";
+
 import "@/styles/globals.css";
 
 import { AppProvider } from "@/libs/context/app";
@@ -17,9 +19,20 @@ export default function App({ Component, pageProps }: AppProps) {
         onError: handleGlobalSWRError,
       }}
     >
+      <style global jsx>{`
+        html,
+        body,
+        body > div:first-child,
+        div#__next {
+          height: 100%;
+        }
+      `}</style>
+
       <AppProvider>
         <Component {...pageProps} />
       </AppProvider>
+
+      <ToastContainer theme="colored" />
     </SWRConfig>
   );
 }

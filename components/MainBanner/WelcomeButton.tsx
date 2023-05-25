@@ -1,6 +1,7 @@
 import type { FC } from "react";
 import { useRouter } from "next/router";
 import MetaMaskOnboarding from "@metamask/onboarding";
+import classNames from "classnames";
 
 import OpenAppButton from "./OpenAppButton";
 import ConnectToMetaMaskButton from "./ConnectToMetaMaskButton";
@@ -9,12 +10,14 @@ import InstallMetaMaskButton from "./InstallMetaMaskButton";
 import styles from "./Welcome.module.css";
 
 interface WelcomeButtonProps {
+  className?: string;
   currentAccount?: string;
   startOnboarding: () => void;
   show: boolean;
 }
 
 const WelcomeButton: FC<WelcomeButtonProps> = ({
+  className,
   currentAccount,
   startOnboarding,
   show,
@@ -25,7 +28,10 @@ const WelcomeButton: FC<WelcomeButtonProps> = ({
     router.push("/demo");
   };
 
-  const btnClassName = show ? `${styles.welcomeButton}` : styles.hiddenBtn;
+  const btnClassName = classNames(className, {
+    [styles.welcomeButton]: show,
+    invisible: !show,
+  });
 
   if (MetaMaskOnboarding.isMetaMaskInstalled()) {
     if (!currentAccount) {
