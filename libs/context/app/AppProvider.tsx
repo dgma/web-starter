@@ -58,9 +58,7 @@ const AppProvider: FC<PropsWithChildren> = ({ children }) => {
   const verification = useCallback(
     async (provider: ethers.providers.Web3Provider) => {
       try {
-        console.log("start verification");
         const isConnectedToProperNetwork = await verifyChain(provider);
-        console.log("isConnectedToProperNetwork", isConnectedToProperNetwork);
         setIsConnectedToProperNetwork(isConnectedToProperNetwork);
         setNetworkVerificationInProgress(false);
       } catch (error) {

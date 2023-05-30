@@ -14,12 +14,13 @@
   "dependencies": {
     "@dgma/protocol": "0.1.11-alpha",
     "@metamask/detect-provider": "2.0.0",
-    "@metamask/onboarding": "1.0.1",
     "@next/font": "13.1.6",
     "@sentry/nextjs": "7.42.0",
     "@types/node": "18.11.18",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
+    "@web3modal/ethereum": "^2.4.1",
+    "@web3modal/react": "^2.4.1",
     "classnames": "2.3.2",
     "eslint": "8.33.0",
     "eslint-config-next": "13.1.6",
@@ -31,8 +32,10 @@
     "react-spinners": "^0.13.8",
     "react-toastify": "^9.1.1",
     "swr": "^2.1.1",
-    "typescript": "4.9.4",
-    "typewriter-effect": "^2.19.0"
+    "typescript": "5.0.4",
+    "typewriter-effect": "^2.19.0",
+    "viem": "^0.3.37",
+    "wagmi": "^1.0.8"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.14",

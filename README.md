@@ -27,6 +27,7 @@ CHAIN_ID_HEX='0xCHAIN_ID_HEX'
 FAUCET_WALLET_PK='0xFAUCET_WALLET_PK' # private key of the faucet wallet
 RPC=https://example.com # Blockchain network URL
 SUSPEND_WEBSITE_MSG=false 
+NEXT_PUBLIC_WEB3_MODAL_PROJECT_ID=0x000 # Wallet connect project ID
 ```
 
 Ask the team for the values of these variables.
