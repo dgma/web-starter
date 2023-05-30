@@ -14,6 +14,7 @@ const nextConfig = {
     chainId: process.env.CHAIN_ID_HEX,
     rpc: process.env.RPC,
     suspendMsg: process.env.SUSPEND_WEBSITE_MSG,
+    web3ModalProjectId: process.env.NEXT_PUBLIC_WEB3_MODAL_PROJECT_ID,
   },
 };
 
