@@ -1,0 +1,53 @@
+
+
+name: Reusable Quality Gate Workflow
+on:
+  workflow_call:
+    inputs:
+      save-artifacts:
+        required: true
+        type: boolean
+      artifact-id:
+        required: false
+        type: string
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+jobs:
+  build_and_validate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          always-auth: true
+          cache: 'npm'
+          node-version: '18.x'
+          registry-url: https://npm.pkg.github.com
+      - name: Install modules
+        run: npm ci
+      - name: Code quality
+        run: npm run lint
+      - name: Build
+        env: 
+          NODE_ENV: production
+        run: npm run build
+      - name: Save Build Artifacts
+        if: ${{ inputs.save-artifacts }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-id }}
+          path: dist
+          retention-days: 1
+          if-no-files-found: error
+
+    

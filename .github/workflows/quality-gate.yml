@@ -1,4 +1,4 @@
-name: Build
+name: On-Push Quality Gate
 
 on:
   push:
@@ -6,39 +6,9 @@ on:
       - "main"
 
   workflow_dispatch:
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: true
-
+    
 jobs:
-  build:
-    env:
-      RPC: random.rpc.com:8545
-      CHAIN_ID_HEX: 0x888888
-      DEPLOYMENT_NETWORK_NAME: 'sepolia.dev'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          always-auth: true
-          cache: 'npm'
-          node-version: '16.x'
-          registry-url: https://npm.pkg.github.com
-      - name: Install modules
-        run: npm ci
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - run: npm rebuild && npm run prepare --if-present
-      - name: code quality
-        run: npm run lint
-      - name: Build
-        run: docker compose build;
-        env:
-          NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  reuse_build_and_validate:
+    uses: "./.github/workflows/quality-gate.reusable.yml"
+    with:
+      save-artifacts: false

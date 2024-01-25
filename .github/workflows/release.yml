@@ -1,0 +1,17 @@
+name: Continues Delivery For Dev ENV
+
+on:
+  push:
+    branches: ["main"]
+
+  workflow_dispatch:
+
+jobs:
+  deploy_release:
+    uses: "./.github/workflows/release.reusable.yml"
+    with:
+      folder: dgma.dev
+    secrets:
+      serverSshPrivateKey: ${{ secrets.SERVER_SSH_KEY }}
+      remoteHost: ${{ secrets.REMOTE_HOST }}
+      remoteUser: ${{ secrets.REMOTE_USER }}

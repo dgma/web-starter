@@ -1,0 +1,39 @@
+name: Reusable Workflow for Continues Deployment & Delivery
+
+on:
+  workflow_call:
+    inputs:
+      folder:
+        required: true
+        type: string
+    secrets:
+      serverSshPrivateKey:
+        required: true
+      remoteHost:
+        required: true
+      remoteUser:
+        required: true
+
+jobs:
+  reuse_build_and_validate:
+    uses: "./.github/workflows/quality-gate.reusable.yml"
+    with:
+      save-artifacts: true
+      artifact-id: release-ready-build
+  deploy_sources:
+    needs: reuse_build_and_validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download build folder
+        uses: actions/download-artifact@v4
+        with:
+          name: release-ready-build
+          path: app
+      - uses: easingthemes/ssh-deploy@v5.0.0
+        with:
+          SSH_PRIVATE_KEY: ${{ secrets.serverSshPrivateKey }}
+          SOURCE: "app/*"
+          REMOTE_HOST: ${{ secrets.remoteHost }}
+          REMOTE_USER: ${{ secrets.remoteUser }}
+          TARGET: /root/web/${{ inputs.folder }}
