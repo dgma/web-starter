@@ -1,4 +1,4 @@
-name: Continues Delivery For Dev ENV
+name: Continues Delivery
 
 on:
   push:
