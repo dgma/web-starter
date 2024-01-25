@@ -36,4 +36,4 @@ jobs:
           SOURCE: "app/*"
           REMOTE_HOST: ${{ secrets.remoteHost }}
           REMOTE_USER: ${{ secrets.remoteUser }}
-          TARGET: /root/web/${{ inputs.folder }}
+          TARGET: ${{ inputs.folder }}

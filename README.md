@@ -2,7 +2,9 @@
 
 [![Continues Delivery](https://github.com/dgma/web/actions/workflows/release.yml/badge.svg)](https://github.com/dgma/web/actions/workflows/release.yml)
 
-## Installations
+Template for dgma react apps bootstrapping
+
+## Installation
 
 ```bash
 npm install
