@@ -1,6 +1,6 @@
-[![Quality Gate](https://github.com/safenook/web/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/safenook/web/actions/workflows/quality-gate.yml)
+[![Quality Gate](https://github.com/dgma/web/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/dgma/web/actions/workflows/quality-gate.yml)
 
-[![Release](https://github.com/safenook/web/actions/workflows/release.yml/badge.svg)](https://github.com/safenook/web/actions/workflows/release.yml)
+[![Continues Delivery](https://github.com/dgma/web/actions/workflows/release.yml/badge.svg)](https://github.com/dgma/web/actions/workflows/release.yml)
 
 ## Installations
 
