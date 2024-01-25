@@ -4,7 +4,7 @@
 
 Template for dgma react apps bootstrapping
 
-## Installations
+## Installation
 
 ```bash
 npm install
