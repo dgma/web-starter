@@ -9,7 +9,6 @@ module.exports = {
   ],
   ignorePatterns: [
     "dist",
-    "app",
     ".eslintrc.cjs",
     "tailwind.config.cjs",
     "postcss.config.cjs",

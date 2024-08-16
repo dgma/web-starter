@@ -6,7 +6,7 @@ import { hardhat } from "wagmi/chains";
 export const projectId = "YOUR_PROJECT_ID";
 
 // 2. Create wagmiConfig
-const metadata = {
+export const metadata = {
   name: "App Name",
   description: "App description",
   url: "https://web3modal.com", // origin must match your domain & subdomain
@@ -14,7 +14,7 @@ const metadata = {
 };
 
 export const config = defaultWagmiConfig({
-  chains: [hardhat], // required
+  chains: [hardhat] as const, // required
   projectId, // required
   metadata, // required
   transports: {
