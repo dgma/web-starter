@@ -1,6 +1,24 @@
 {
   "name": "web-starter",
   "version": "0.0.2",
+  "description": "TS Web3 React app template",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dgma/web-starter.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dgma/web-starter/issues"
+  },
+  "homepage": "https://github.com/dgma/web-starter#readme",
+  "keywords": [
+    "veil",
+    "ts",
+    "web3",
+    "viem",
+    "starter-kit"
+  ],
+  "author": "Dzmitry Lahunouski",
+  "license": "SEE LICENSE IN LICENSE",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
