@@ -1,9 +1,7 @@
-name: On-Push Quality Gate
+name: Quality Gate
 
 on:
   push:
-    branches-ignore:
-      - "main"
 
   workflow_dispatch:
     

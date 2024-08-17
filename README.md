@@ -1,4 +1,4 @@
-[![Quality Gate](https://github.com/dgma/web/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/dgma/web/actions/workflows/quality-gate.yml)
+[![Quality Gate](https://github.com/dgma/web-starter/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/dgma/web-starter/actions/workflows/quality-gate.yml)
 
 Template for dgma react apps bootstrapping
 
